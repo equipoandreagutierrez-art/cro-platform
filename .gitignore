@@ -1,0 +1,4 @@
+# Archivos grandes / generados
+*.pdf
+*.zip
+.DS_Store
