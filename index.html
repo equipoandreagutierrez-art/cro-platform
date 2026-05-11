@@ -3,7 +3,30 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
 <title>Plataforma CRO/UX</title>
+<script>
+(function(){
+  var USER = "data", PASS = "Ia_26_DatA_@_26_EquIP0";
+  var key = "cro_auth";
+  if(sessionStorage.getItem(key) !== "1"){
+    document.addEventListener("DOMContentLoaded", function(){
+      document.body.style.display = "none";
+    });
+    var u = prompt("Usuario:");
+    var p = prompt("Contraseña:");
+    if(u === USER && p === PASS){
+      sessionStorage.setItem(key, "1");
+      document.addEventListener("DOMContentLoaded", function(){
+        document.body.style.display = "";
+      });
+    } else {
+      document.write("<div style='font-family:sans-serif;text-align:center;margin-top:20vh;font-size:18px'>Acceso denegado.</div>");
+      document.close();
+    }
+  }
+})();
+</script>
 <style>
 :root{
   --bg:#f5f6fa; --panel:#fff; --ink:#101828; --muted:#667085;
