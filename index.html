@@ -288,7 +288,7 @@ label{display:block;font-size:11px;font-weight:800;margin-bottom:6px;color:#4754
       <button data-view="auditor" onclick="navigate('auditor',this)">🔍 Auditor</button>
       <button data-view="client" onclick="navigate('client',this)">👤 Vista Cliente</button>
       <button data-view="dashboard" onclick="navigate('dashboard',this)">📊 Dashboard</button>
-      <button data-view="clarity" onclick="navigate('clarity',this)">🔥 Clarity</button>
+      <button data-view="clarity" onclick="navigate('clarity',this)" style="display:none">🔥 Clarity</button>
     </nav>
     <div class="client-picker">
       <label>Auditoría activa</label>
@@ -296,8 +296,8 @@ label{display:block;font-size:11px;font-weight:800;margin-bottom:6px;color:#4754
       <button onclick="openNewClientModal()">+ Nueva auditoría</button>
     </div>
     <div class="footer-nav">
-      <button onclick="exportData()">⬇ Exportar datos</button>
-      <button onclick="importData()">⬆ Importar datos</button>
+      <button onclick="exportData()" style="display:none">⬇ Exportar datos</button>
+      <button onclick="importData()" style="display:none">⬆ Importar datos</button>
       <button onclick="resetAll()">⚠ Reiniciar todo</button>
     </div>
   </aside>
