@@ -516,6 +516,17 @@ label{display:block;font-size:11px;font-weight:800;margin-bottom:6px;color:#4754
   </main>
 </div>
 
+<!-- Modal detalle KPI -->
+<div class="modal-bg" id="kpiDetailModal">
+  <div class="modal" style="width:min(720px,100%)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 id="kpiDetailTitle" style="margin:0"></h2>
+      <button class="btn btn-ghost" onclick="closeModal('kpiDetailModal')" style="padding:6px 14px">✕ Cerrar</button>
+    </div>
+    <div id="kpiDetailContent"></div>
+  </div>
+</div>
+
 <!-- Modal nuevo cliente -->
 <div class="modal-bg" id="newClientModal">
   <div class="modal">
@@ -1085,9 +1096,9 @@ function renderAuditor(){
   const devLabel = auditorDevice==='desktop' ? '🖥 Score Desktop' : auditorDevice==='mobile' ? '📱 Score Mobile' : 'Score global';
   let html = `<div class="scorebar">
     <div class="score-stat score-main"><div class="label">${devLabel}</div><div class="value">${devScore}%</div><div style="margin-top:8px"><span class="pill ${statusClass}">${statusLabel}</span></div></div>
-    <div class="score-stat"><div class="label">Criterios evaluados</div><div class="value">${devEval}/${stats.total}</div></div>
-    <div class="score-stat"><div class="label">Críticos</div><div class="value">${stats.critical}</div></div>
-    <div class="score-stat"><div class="label">Quick wins</div><div class="value">${stats.quickWins}</div></div>
+    <div class="score-stat" style="cursor:pointer" onclick="showKpiDetail('evaluated')" title="Ver criterios evaluados"><div class="label">Criterios evaluados</div><div class="value">${devEval}/${stats.total}</div><div style="margin-top:6px;font-size:11px;color:var(--muted)">Ver detalle →</div></div>
+    <div class="score-stat" style="cursor:pointer" onclick="showKpiDetail('critical')" title="Ver hallazgos críticos"><div class="label">Críticos</div><div class="value">${stats.critical}</div><div style="margin-top:6px;font-size:11px;color:var(--muted)">Ver detalle →</div></div>
+    <div class="score-stat" style="cursor:pointer" onclick="showKpiDetail('quickwins')" title="Ver quick wins"><div class="label">Quick wins</div><div class="value">${stats.quickWins}</div><div style="margin-top:6px;font-size:11px;color:var(--muted)">Ver detalle →</div></div>
   </div>`;
 
   SECTIONS.forEach(s => {
@@ -1843,6 +1854,75 @@ function openNewClientModal(){
   document.getElementById('newClientModal').classList.add('open');
 }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function showKpiDetail(type){
+  const c = state.clients[state.activeId];
+  if(!c) return;
+  const allRows = getRows(c);
+  const scoreLabel = s => s==='na'?'N/A':Number(s)===0?'0 No':Number(s)===1?'1 Parcial':'2 OK';
+  const scoreColor = s => s==='na'?'#667085':Number(s)===0?'#b42318':Number(s)===1?'#b54708':'#027a48';
+  const pill = (text,color) => `<span style="display:inline-block;background:${color}18;color:${color};border:1px solid ${color}44;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700">${text}</span>`;
+
+  let rows, title;
+  if(type==='evaluated'){
+    title = 'Criterios evaluados';
+    rows = allRows.filter(r => r.score !== 'na' || (r.scoreMobile??'na') !== 'na');
+  } else if(type==='critical'){
+    title = 'Hallazgos críticos';
+    rows = allRows.filter(r => r.priorityScore >= 11);
+    rows.sort((a,b) => b.priorityScore - a.priorityScore);
+  } else {
+    title = '⚡ Quick wins';
+    rows = allRows.filter(r => r.priorityScore >= 9 && Number(r.effort) <= 2);
+    rows.sort((a,b) => b.priorityScore - a.priorityScore);
+  }
+
+  document.getElementById('kpiDetailTitle').textContent = `${title} (${rows.length})`;
+
+  if(!rows.length){
+    document.getElementById('kpiDetailContent').innerHTML = '<div style="color:#667085;padding:20px 0;text-align:center">No hay datos para mostrar.</div>';
+  } else {
+    let html = '';
+    // Group by section for 'evaluated'
+    if(type==='evaluated'){
+      SECTIONS.forEach(s => {
+        const sRows = rows.filter(r => r.sectionId === s.id);
+        if(!sRows.length) return;
+        html += `<div style="margin-bottom:18px">
+          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#5925dc;margin-bottom:8px">${escapeHtml(s.title)}</div>`;
+        sRows.forEach(r => {
+          html += `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:8px;border:1px solid #eef0f5;margin-bottom:6px;background:#fafafa">
+            <div style="font-size:13px;font-weight:600;flex:1">${escapeHtml(r.criterion)}</div>
+            <div style="display:flex;gap:6px;flex-shrink:0">
+              ${pill('🖥 '+scoreLabel(r.score), scoreColor(r.score))}
+              ${pill('📱 '+scoreLabel(r.scoreMobile??'na'), scoreColor(r.scoreMobile??'na'))}
+            </div>
+          </div>`;
+        });
+        html += `</div>`;
+      });
+    } else {
+      rows.forEach(r => {
+        const ps = r.priorityScore;
+        const pColor = ps>=11?'#b42318':ps>=8?'#b54708':'#667085';
+        html += `<div style="border:1px solid #eef0f5;border-left:4px solid ${pColor};border-radius:10px;padding:14px 16px;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:800;color:#667085;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">${escapeHtml(r.section)}</div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:8px">${escapeHtml(r.criterion)}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            ${pill('🖥 '+scoreLabel(r.score), scoreColor(r.score))}
+            ${pill('📱 '+scoreLabel(r.scoreMobile??'na'), scoreColor(r.scoreMobile??'na'))}
+            ${pill('Prioridad '+ps, pColor)}
+            ${pill('Esfuerzo '+r.effort+'/5','#667085')}
+            <span style="font-size:11px;color:#667085">KPI: ${escapeHtml(r.kpi||'—')}</span>
+          </div>
+          ${r.rec?`<div style="margin-top:8px;font-size:12px;color:#344054;background:#f8f9fc;border-radius:6px;padding:8px"><b>Rec:</b> ${escapeHtml(r.rec)}</div>`:''}
+        </div>`;
+      });
+    }
+    document.getElementById('kpiDetailContent').innerHTML = html;
+  }
+  document.getElementById('kpiDetailModal').classList.add('open');
+}
 
 function createClient(){
   const name = document.getElementById('nc-name').value.trim();
