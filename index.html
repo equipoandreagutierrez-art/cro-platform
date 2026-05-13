@@ -332,6 +332,8 @@ label{display:block;font-size:11px;font-weight:800;margin-bottom:6px;color:#4754
           </div>
           <button class="btn btn-secondary" onclick="expandAllSections(true)">Expandir todo</button>
           <button class="btn btn-secondary" onclick="expandAllSections(false)">Colapsar</button>
+          <button class="btn btn-secondary" onclick="exportData()">💾 Guardar datos</button>
+          <button class="btn btn-secondary" onclick="exportPDF()">🖨 Exportar PDF</button>
         </div>
       </div>
 
@@ -346,7 +348,7 @@ label{display:block;font-size:11px;font-weight:800;margin-bottom:6px;color:#4754
           <div class="sub">Versión de presentación · solo lectura · lista para compartir</div>
         </div>
         <div class="actions">
-          <button class="btn btn-secondary" onclick="window.print()">🖨 Exportar PDF</button>
+          <button class="btn btn-secondary" onclick="exportPDF()">🖨 Exportar PDF</button>
         </div>
       </div>
       <div id="clientContent"></div>
@@ -590,7 +592,7 @@ const SECTIONS = [
     ['Evitar carruseles problemáticos','¿Hay carruseles autorrotativos?','Sustituir por secciones estáticas.','Aumentar descubrimiento','Interacción']
   ]},
   {id:'forms',title:'7. Formularios y reserva',weight:10,source:'Baymard-inspired · Forms',desc:'Esfuerzo para iniciar reserva, lead o contacto.',criteria:[
-    ['Inicio de reserva visible','¿Se puede iniciar desde la home?','Mostrar buscador o entrada al flujo.','Aumentar leads','Form start rate'],
+    ['Inicio del flujo de registro visible','¿Se puede iniciar desde la home?','Mostrar buscador o entrada al flujo.','Aumentar leads','Form start rate'],
     ['Campos comprensibles','¿Origen, destino, fecha se entienden?','Labels persistentes, ejemplos, autocompletado.','Reducir errores','Form error rate'],
     ['Expectativa post-envío','¿Sabe qué pasará después?','Explicar si recibirá precio, llamada o email.','Aumentar completion','Form completion'],
     ['Microcopy de ayuda','¿Hay ayuda donde puede haber dudas?','Ejemplos y validaciones claras.','Reducir abandono','Field abandonment'],
@@ -623,11 +625,11 @@ let state = { clients:{}, activeId:null };
 function uid(){ return 'a'+Math.random().toString(36).slice(2,9); }
 
 function save(){
-  try{ localStorage.setItem('croPlatform', JSON.stringify(state)); }catch(e){}
+  try{ localStorage.setItem('croPlatformV2', JSON.stringify(state)); }catch(e){}
 }
 function load(){
   try{
-    const raw = localStorage.getItem('croPlatform');
+    const raw = localStorage.getItem('croPlatformV2');
     if(raw){ state = JSON.parse(raw); }
   }catch(e){}
   if(Object.keys(state.clients).length === 0){
@@ -645,7 +647,7 @@ function load(){
       'value-1':{score:'0',scoreMobile:'0',impact:5,severity:4,confidence:5,effort:2,
         evidence:'Todo el copy habla de features: "chofer privado", "350 ciudades", "soluciones seguras". Sin beneficios tangibles para el viajero.',
         evidenceMobile:'Mismo problema. En mobile el texto secundario queda comprimido y se lee aún menos antes del scroll.',
-        rec:'Bullet points de beneficios: "Llega puntual aunque el vuelo cambie", "Trabaja en el coche", "Sin sorpresas de precio".',
+        rec:'Bullet points de beneficios: "Llega puntual aunque el vuelo cambie", "Trabaja en el coche", "Sin sorpresas de precio". Además, comunicar el beneficio del registro: "Cuenta gratuita · Cotiza sin compromiso · Acceso a +350 ciudades". El usuario necesita entender no solo por qué Drivania sino por qué registrarse, dado que el registro es el primer paso real y requiere validación.',
         hyp:'Si el copy refleja beneficios tangibles, el CTR del CTA mejorará al resonar con la motivación real del usuario.',
         status:'Pendiente',owner:'Copy',kpi:'CTR CTA principal',
         clarityNotes:'Attention map PC: el claim H1 se lee (zona cálida sobre el texto del hero) pero no genera acción. Attention map mobile: atención concentrada en el bottom del hero donde aparece el claim, sin conversión posterior. El copy actual no activa la acción aunque sí se consume.',
@@ -699,15 +701,16 @@ function load(){
       'cta-0':{score:'0',scoreMobile:'0',impact:5,severity:5,confidence:5,effort:1,
         evidence:'En el hero de desktop no hay ningún botón de acción. Solo "Play Video". "Reservar ahora" aparece tras 3-4 scrolls.',
         evidenceMobile:'En mobile es aún peor: la imagen del chofer ocupa toda la pantalla y el claim queda en la parte inferior. El CTA está completamente fuera del fold.',
-        rec:'CTA "Reservar ahora" en el hero en ambos dispositivos. En mobile: botón fijo en la barra inferior al hacer scroll.',
-        hyp:'Un CTA en el hero puede capturar a usuarios de alta intención llegados desde campañas o búsqueda de marca.',
+        rec:'CTA "Crear cuenta" o "Solicitar acceso" en el hero en ambos dispositivos. El usuario no puede reservar sin registro previo y aprobación interna, por lo que "Reservar ahora" genera una expectativa que no se cumple en el primer contacto. El CTA debe reflejar el primer paso real del journey. En mobile: botón fijo en la barra inferior al hacer scroll.',
+        hyp:'Un CTA alineado con el paso real (registro) reduce la disonancia entre expectativa y realidad, y puede mejorar tanto el CTR como la tasa de completado del formulario. Usuarios que llegan esperando reservar y se encuentran un registro abandonan; usuarios que saben que van a registrarse completan el proceso.',
         status:'Pendiente',owner:'Dev',kpi:'CTR CTA hero',
         clarityClickRate:'0',clarityScrollDepth:'50',
         clarityNotes:'Click map PC y Mobile (75 sesiones): 0 clics en área del hero en ambos dispositivos. 33% de sesiones ES y 29% EN con 0 clics totales. Patrón "5 min/0 clics" confirma que los usuarios no encuentran punto de acción.',
         screenshots:['clarity_images/click-pc.png'],screenshotsMobile:['clarity_images/click-mobile.png']},
-      'cta-1':{score:'1',scoreMobile:'1',impact:4,severity:3,confidence:5,effort:1,
-        evidence:'"Reservar ahora" es razonablemente específico en ambos dispositivos.',
-        rec:'Probar: "Reservar mi traslado" o "Pedir presupuesto corporativo" según segmento.',
+      'cta-1':{score:'0',scoreMobile:'0',impact:4,severity:3,confidence:5,effort:1,
+        evidence:'Desktop: "Reservar ahora" no es específico porque es incorrecto. El usuario no puede reservar directamente — el flujo real es: registro → validación interna → acceso a plataforma → cotización → reserva. El CTA promete el último paso del journey cuando el usuario está en el primero.',
+        evidenceMobile:'Mobile: Mismo problema. La disonancia entre "Reservar ahora" y el formulario de registro que aparece tras el clic genera abandono.',
+        rec:'Alinear el CTA con la acción real: "Crear cuenta gratuita", "Solicitar acceso" o "Empieza aquí". Complementar con microcopy que explique el beneficio: "Accede a cotizaciones en +350 ciudades" o "Registro gratuito · Acceso en 24h". Para segmento corporativo: "Pedir presupuesto corporativo".',
         status:'Pendiente',owner:'Marketing',kpi:'CTR CTA'},
       'cta-2':{score:'1',scoreMobile:'1',impact:4,severity:3,confidence:4,effort:1,
         evidence:'"Reservar ahora" aparece al menos 2 veces en la página, bien posicionado tras bloques de contenido.',
@@ -715,9 +718,9 @@ function load(){
         rec:'Añadir tercera instancia tras el bloque de confianza.',
         status:'Pendiente',owner:'Dev',kpi:'Lead rate'},
       'cta-3':{score:'0',scoreMobile:'0',impact:3,severity:3,confidence:4,effort:1,
-        evidence:'No hay CTA secundario para usuarios exploratorios en ninguna versión.',
-        evidenceMobile:'En mobile tampoco hay alternativa suave al CTA de reserva directa.',
-        rec:'Hero: añadir "Ver nuestros servicios" o botón de WhatsApp como CTA secundario.',
+        evidence:'Desktop: No hay CTA secundario. Dado que el flujo requiere registro + validación antes de poder reservar, un CTA secundario tipo "Ver cómo funciona" o "Explorar destinos" es especialmente necesario para usuarios que no están listos para registrarse pero sí para explorar.',
+        evidenceMobile:'Mobile: Mismo problema. Un CTA secundario que lleve a destinos o servicios puede capturar intención exploratoria que de otro modo se pierde — el informe de Registros demuestra que el 59% de las visitas a registro pasan antes por páginas de destinos.',
+        rec:'Hero: añadir "Ver cómo funciona" o "Explorar destinos" como CTA secundario. En mobile: botón secundario visible bajo el CTA principal.',
         status:'Pendiente',owner:'UX',kpi:'CTR CTA secundario'},
       'cta-4':{score:'1',scoreMobile:'1',impact:3,severity:2,confidence:3,effort:1,
         evidence:'"Reservar ahora" sugiere flujo coherente. No verificado el post-click.',
@@ -740,9 +743,9 @@ function load(){
         rec:'Microcopy bajo el CTA: "Cancelación gratuita · Precio cerrado · Pago seguro".',
         status:'Pendiente',owner:'Copy',kpi:'Checkout'},
       'trust-2':{score:'0',scoreMobile:'0',impact:4,severity:4,confidence:5,effort:2,
-        evidence:'Sin bloque "Cómo funciona". El usuario desconoce qué pasa tras reservar.',
-        evidenceMobile:'En mobile este bloque es especialmente importante al ser la primera reserva de un servicio desconocido.',
-        rec:'3 pasos: Elige origen/destino → Confirma → Tu chofer llega puntual. Iconos grandes en mobile.',
+        evidence:'Desktop: Sin bloque "Cómo funciona". El usuario desconoce el proceso completo: que debe registrarse, que habrá una validación interna, y que después podrá acceder a la plataforma de cotización y reserva. Esta opacidad del proceso es especialmente dañina en un servicio premium con flujo de aprobación.',
+        evidenceMobile:'Mobile: En mobile este bloque es crítico. El usuario que llega por primera vez necesita entender que no va a reservar directamente, sino que hay un proceso de onboarding previo.',
+        rec:'3-4 pasos visuales: 1) Regístrate gratis → 2) Validamos tu cuenta en 24h → 3) Accede a cotizaciones en +350 ciudades → 4) Reserva con tu chofer asignado. Iconos grandes en mobile. Posicionar antes del CTA principal para que el usuario sepa qué esperar.',
         status:'Pendiente',owner:'UX',kpi:'Form start rate'},
       'trust-3':{score:'1',scoreMobile:'1',impact:3,severity:2,confidence:4,effort:1,
         evidence:'Fotos de conductores y "Chofer del mes" transmiten profesionalidad, pero sin datos concretos de selección.',
@@ -813,10 +816,10 @@ function load(){
 
       // 7. FORMULARIOS
       'forms-0':{score:'0',scoreMobile:'0',impact:5,severity:4,confidence:5,effort:2,
-        evidence:'Sin formulario ni buscador en la home. "Reservar ahora" aparece tras 3-4 scrolls completos.',
-        evidenceMobile:'En mobile el problema es crítico: sin formulario visible y el CTA enterrado, la intención de reserva se pierde en los primeros segundos.',
-        rec:'Formulario de inicio rápido en el hero: origen, destino, fecha. En mobile: campos grandes y teclado optimizado.',
-        hyp:'Un formulario en el hero puede multiplicar por 2-3x el form start rate.',
+        evidence:'Desktop: Sin formulario de registro ni punto de entrada al flujo de alta en la home. El CTA "Reservar ahora" aparece tras 3-4 scrolls, pero además es engañoso: el usuario no puede reservar sin haberse registrado y haber sido aprobado previamente. No existe ningún elemento en la home que comunique el flujo real (registro → validación → acceso → cotización → reserva).',
+        evidenceMobile:'Mobile: En mobile el problema es crítico: sin formulario de registro visible y sin explicar el proceso, la intención se pierde en los primeros segundos. El usuario no sabe que necesita registrarse primero.',
+        rec:'Formulario de registro simplificado en el hero (nombre, email, empresa) o al menos un CTA de registro visible. Añadir un bloque "Cómo funciona" de 3-4 pasos que explique el flujo: 1) Crea tu cuenta → 2) Te validamos en 24h → 3) Cotiza y reserva en +350 ciudades. En mobile: campos grandes y teclado optimizado.',
+        hyp:'Explicar el flujo real antes de pedir el registro reduce la fricción de un proceso que el usuario no espera. El form start rate puede multiplicarse por 2-3x si el usuario entiende qué va a pasar antes de actuar.',
         status:'Pendiente',owner:'Dev',kpi:'Form start rate',
         clarityClickRate:'0',
         clarityNotes:'33% sesiones ES con 0 clics totales (30 sesiones PC). 29% EN igual patrón. Múltiples sesiones de exactamente ~5 min y 0 clics = idle timeout de Clarity por falta de punto de entrada al flujo visible. Sin formulario en el hero no hay conversión posible desde el primer viewport.',
@@ -834,9 +837,9 @@ function load(){
         rec:'Strip de motivadores: ✓ Precio fijo · ✓ Conductor profesional · ✓ 24/7 · ✓ Seguimiento en tiempo real.',
         status:'Pendiente',owner:'Design',kpi:'Lead rate'},
       'persuasion-2':{score:'0',scoreMobile:'0',impact:4,severity:3,confidence:4,effort:2,
-        evidence:'Sin referencia a precio ni rango antes de iniciar la reserva. El usuario no sabe si son 30€ o 300€.',
-        evidenceMobile:'En mobile la falta de contexto de precio genera más incertidumbre al ser una decisión de compra desde el móvil.',
-        rec:'"Desde X€ por trayecto" o comparativa de valor. En mobile: visible en el hero o justo antes del CTA.',
+        evidence:'Desktop: Sin referencia a precio ni rango antes de iniciar el registro. El usuario no sabe si son 30€ o 300€, y encima debe registrarse y ser aprobado antes de poder ver precios reales. Esta doble barrera (incertidumbre de precio + proceso de registro) multiplica la fricción.',
+        evidenceMobile:'Mobile: En mobile la falta de contexto de precio genera aún más incertidumbre, sumada a que el usuario no sabe que necesita registrarse primero para acceder a cotizaciones.',
+        rec:'Incluir rangos de precio indicativos o "Desde X€" en la home o en las páginas de destino. Alternativamente, comunicar que el registro da acceso a cotizaciones personalizadas sin compromiso — esto convierte la barrera del registro en un beneficio ("regístrate para ver tus precios").',
         status:'Pendiente',owner:'Marketing',kpi:'CVR'},
       'persuasion-4':{score:'1',scoreMobile:'0',impact:3,severity:2,confidence:3,effort:2,
         evidence:'Las fotos transmiten lifestyle ejecutivo coherente pero sin estructura narrativa clara hacia la reserva.',
@@ -1492,6 +1495,161 @@ function cvShotsHTML(shots, cid, field){
       <img src="${src}" alt="Captura"/>
     </div>`
   ).join('')}</div>`;
+}
+
+function exportPDF(){
+  const c = state.clients[state.activeId];
+  if(!c){ alert('No hay auditoría activa.'); return; }
+  const stats = computeStats(c);
+  const today = new Date().toLocaleDateString('es-ES');
+  const scoreColor = s => s < 41 ? '#b42318' : s < 71 ? '#b54708' : s < 91 ? '#027a48' : '#1d4ed8';
+  const scoreLabel = s => s < 41 ? 'Crítico' : s < 71 ? 'Mejorable' : s < 91 ? 'Bueno' : 'Excelente';
+  const pill = (text, color) => `<span style="display:inline-block;background:${color}18;color:${color};border:1px solid ${color}44;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700">${text}</span>`;
+  const scoreD = v => v==='na'?pill('N/A','#667085'):Number(v)===0?pill('0 No','#b42318'):Number(v)===1?pill('1 Parcial','#b54708'):pill('2 OK','#027a48');
+  const prioColor = n => n>=11?'#b42318':n>=8?'#b54708':'#667085';
+
+  let body = '';
+
+  // Cover
+  body += `<div style="page-break-after:always;padding:60px 48px;background:linear-gradient(135deg,#1e293b,#0b0f1a);color:#fff;min-height:calc(100vh - 120px);display:flex;flex-direction:column;justify-content:center">
+    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;margin-bottom:12px">Informe de Auditoría CRO/UX</div>
+    <h1 style="margin:0 0 10px;font-size:42px;font-weight:900;letter-spacing:-.03em">${escapeHtml(c.name)}</h1>
+    <div style="color:#cbd5e1;font-size:16px;margin-bottom:40px">${escapeHtml(c.url)} · ${escapeHtml(c.sector)} · Objetivo: ${escapeHtml(c.objective)}</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:700px">
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:20px">
+        <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Score global</div>
+        <div style="font-size:36px;font-weight:900;margin-top:6px">${stats.score}%</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:4px">${scoreLabel(stats.score)}</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:20px">
+        <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Desktop</div>
+        <div style="font-size:36px;font-weight:900;margin-top:6px">${stats.scoreDesktop}%</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:20px">
+        <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Mobile</div>
+        <div style="font-size:36px;font-weight:900;margin-top:6px">${stats.scoreMobile}%</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:20px">
+        <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Críticos · QW</div>
+        <div style="font-size:36px;font-weight:900;margin-top:6px">${stats.critical} · ${stats.quickWins}</div>
+      </div>
+    </div>
+    <div style="margin-top:auto;padding-top:60px;font-size:13px;color:#475569">Generado el ${today} · CRO Platform</div>
+  </div>`;
+
+  // Resumen por categoría
+  body += `<div style="page-break-after:always;padding:48px">
+    <h2 style="margin:0 0 24px;font-size:26px;font-weight:900;color:#101828">Resumen por categoría</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="background:#f8f9fc;border-bottom:2px solid #e4e7ec">
+        <th style="padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#475467">Categoría</th>
+        <th style="padding:10px 14px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#3730a3">Desktop</th>
+        <th style="padding:10px 14px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#9d174d">Mobile</th>
+        <th style="padding:10px 14px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#475467">Global</th>
+        <th style="padding:10px 14px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#475467">Evaluados</th>
+      </tr></thead>
+      <tbody>
+        ${SECTIONS.map(s => {
+          const pct = stats.catScores[s.id] || 0;
+          const pctD = stats.catScoresD[s.id] || 0;
+          const pctM = stats.catScoresM[s.id] || 0;
+          const evaluated = getRows(c).filter(r => r.sectionId === s.id && r.score !== 'na').length;
+          return `<tr style="border-bottom:1px solid #eef0f5">
+            <td style="padding:12px 14px;font-weight:700">${escapeHtml(s.title)}<div style="font-size:11px;color:#667085;font-weight:400">${escapeHtml(s.source)}</div></td>
+            <td style="padding:12px 14px;text-align:center"><span style="font-weight:800;color:${scoreColor(pctD)}">${pctD}%</span></td>
+            <td style="padding:12px 14px;text-align:center"><span style="font-weight:800;color:${scoreColor(pctM)}">${pctM}%</span></td>
+            <td style="padding:12px 14px;text-align:center"><span style="font-weight:800;color:${scoreColor(pct)}">${pct}%</span></td>
+            <td style="padding:12px 14px;text-align:center;color:#667085">${evaluated}/${s.criteria.length}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  // Hallazgos por sección — todos los criterios
+  SECTIONS.forEach(s => {
+    const criteriaRows = s.criteria.map((cr, i) => {
+      const cid = `${s.id}-${i}`;
+      const r = c.criteria[cid];
+      return { cr, cid, r };
+    });
+    const evaluated = criteriaRows.filter(x => x.r && (x.r.score !== 'na' || (x.r.scoreMobile ?? 'na') !== 'na'));
+    if(!evaluated.length) return;
+
+    body += `<div style="page-break-before:always;padding:48px">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
+        <h2 style="margin:0;font-size:22px;font-weight:900;color:#101828">${escapeHtml(s.title)}</h2>
+        <span style="font-size:12px;color:#667085;font-weight:600">${escapeHtml(s.source)}</span>
+      </div>
+      <div style="color:#667085;font-size:13px;margin-bottom:24px">Peso ${s.weight}%</div>`;
+
+    criteriaRows.forEach(({ cr, cid, r }) => {
+      if(!r) return;
+      const sm = r.scoreMobile ?? 'na';
+      if(r.score === 'na' && sm === 'na') return;
+      const ps = Number(r.impact)+Number(r.severity)+effConfidence(r)-Number(r.effort);
+      const pColor = prioColor(ps);
+      body += `<div style="border:1px solid #e4e7ec;border-radius:12px;margin-bottom:16px;overflow:hidden;border-left:4px solid ${pColor}">
+        <div style="padding:16px 18px;background:#fafafa;border-bottom:1px solid #eef0f5;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+          <div style="flex:1">
+            <div style="font-weight:800;font-size:15px;color:#101828;margin-bottom:4px">${escapeHtml(cr[0])}${hasClarity(r)?` <span style="background:#e0e7ff;color:#3730a3;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800">🔥 Clarity</span>`:''}
+            </div>
+            <div style="font-size:12px;color:#667085">${escapeHtml(cr[1])}</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+            <div style="text-align:center"><div style="font-size:10px;color:#3730a3;font-weight:700;margin-bottom:3px">🖥 Desktop</div>${scoreD(r.score)}</div>
+            <div style="text-align:center"><div style="font-size:10px;color:#9d174d;font-weight:700;margin-bottom:3px">📱 Mobile</div>${scoreD(sm)}</div>
+            <div style="text-align:center"><div style="font-size:10px;color:#667085;font-weight:700;margin-bottom:3px">Prioridad</div>${pill(priorityLabel(ps), pColor)}</div>
+          </div>
+        </div>
+        <div style="padding:14px 18px">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;font-size:12px">
+            <div><span style="color:#667085;font-weight:700">Impacto:</span> <b>${r.impact||'—'}/5</b></div>
+            <div><span style="color:#667085;font-weight:700">Severidad:</span> <b>${r.severity||'—'}/5</b></div>
+            <div><span style="color:#667085;font-weight:700">Confianza:</span> <b>${r.confidence||'—'}/5</b></div>
+            <div><span style="color:#667085;font-weight:700">Esfuerzo:</span> <b>${r.effort||'—'}/5</b></div>
+          </div>
+          ${r.evidence ? `<div style="margin-bottom:8px;font-size:13px"><b style="color:#3730a3">🖥 Evidencia Desktop:</b> ${escapeHtml(r.evidence)}</div>` : ''}
+          ${r.evidenceMobile ? `<div style="margin-bottom:8px;font-size:13px"><b style="color:#9d174d">📱 Evidencia Mobile:</b> ${escapeHtml(r.evidenceMobile)}</div>` : ''}
+          <div style="background:#f0f4ff;border:1px solid #c7d2fe;border-radius:8px;padding:12px;margin-top:8px;font-size:13px">
+            <b style="color:#1e40af">Recomendación:</b> ${escapeHtml(r.rec || cr[2])}
+          </div>
+          ${r.hyp ? `<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;margin-top:8px;font-size:13px"><b style="color:#166534">Hipótesis:</b> ${escapeHtml(r.hyp)}</div>` : ''}
+          ${hasClarity(r) ? `<div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:10px;margin-top:8px;font-size:12px">
+            <b style="color:#5b21b6">🔥 Clarity:</b>
+            ${r.clarityClickRate?` Click rate: <b>${r.clarityClickRate}%</b>`:''}
+            ${r.clarityDeadClicks?` · Dead clicks: <b>${r.clarityDeadClicks}%</b>`:''}
+            ${r.clarityRageClicks?` · Rage clicks: <b>${r.clarityRageClicks}%</b>`:''}
+            ${r.clarityScrollDepth?` · Scroll depth: <b>${r.clarityScrollDepth}%</b>`:''}
+            ${r.clarityNotes?`<div style="margin-top:4px;color:#374151">${escapeHtml(r.clarityNotes)}</div>`:''}
+          </div>` : ''}
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;font-size:12px">
+            <span style="color:#667085"><b>KPI:</b> ${escapeHtml(r.kpi||cr[4])}</span>
+            <span style="color:#667085">·</span>
+            <span style="color:#667085"><b>Estado:</b> ${escapeHtml(r.status||'Pendiente')}</span>
+            ${r.action?`<span style="color:#667085">· <b>Acción:</b> ${escapeHtml(r.action)}</span>`:''}
+          </div>
+        </div>
+      </div>`;
+    });
+
+    body += `</div>`;
+  });
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
+  <title>Informe CRO · ${escapeHtml(c.name)}</title>
+  <style>
+    *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;color:#101828;line-height:1.5}
+    @page{margin:0;size:A4}
+    @media print{body{margin:0}}
+  </style>
+  </head><body>${body}</body></html>`;
+
+  const w = window.open('','_blank','width=900,height=700');
+  w.document.write(html);
+  w.document.close();
+  w.onload = () => w.print();
 }
 
 function findingCardHTML(r, isQuickWin){
