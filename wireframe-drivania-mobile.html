@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Wireframe Mobile · Drivania Home</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,ui-sans-serif,system-ui,sans-serif;background:#f0f0f0;color:#1a1a1a}
+  :root{
+    --anno:#e85d00;
+    --wire-dark:#1a1a1a;
+    --wire-mid:#555;
+    --wire-light:#888;
+    --wire-border:#bbb;
+    --wire-bg:#e8e8e8;
+    --wire-white:#f9f9f9;
+  }
+
+  /* ── Annotation styles ── */
+  .anno-note{
+    font-size:12px;color:var(--anno);font-weight:700;
+    border-left:3px solid var(--anno);padding:8px 12px;
+    margin:0;background:#fff8f5;line-height:1.5;
+  }
+  .change-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    background:var(--anno);color:#fff;
+    font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    padding:3px 10px;border-radius:999px;
+  }
+  .section-badge{
+    text-align:center;padding:8px 0;
+    display:flex;justify-content:center;
+  }
+
+  /* ── PDF / print ── */
+  #btn-pdf{
+    background:#e85d00;color:#fff;border:none;
+    padding:8px 18px;border-radius:6px;
+    font-size:12px;font-weight:800;cursor:pointer;
+    white-space:nowrap;
+  }
+  @media print{
+    #btn-pdf,#sticky-cta-note{display:none!important}
+    .meta-bar{position:relative!important}
+    body{background:#fff}
+    .phone-frame{box-shadow:none!important}
+  }
+
+  /* ── Outer layout ── */
+  .page-wrap{
+    max-width:960px;margin:0 auto;padding:24px 24px 60px;
+  }
+
+  /* ── Meta bar ── */
+  .meta-bar{
+    background:#1a1a1a;color:#fff;
+    padding:16px 24px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:3px solid var(--anno);
+    position:sticky;top:0;z-index:100;
+  }
+  .meta-bar .label{font-size:10px;color:#e85d00;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
+  .meta-bar .title{font-size:16px;font-weight:900}
+  .meta-bar .sub{font-size:11px;color:#666;margin-top:2px}
+  .meta-score{text-align:right}
+  .meta-score .n{font-size:24px;font-weight:900;color:#e85d00}
+  .meta-score .s{font-size:10px;color:#666}
+  .meta-right{display:flex;align-items:center;gap:16px}
+
+  /* ── Legend ── */
+  .legend{
+    display:flex;gap:20px;flex-wrap:wrap;
+    background:#fff;border:1px solid #e0e0e0;
+    border-radius:8px;padding:12px 16px;margin-bottom:24px;
+  }
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#444}
+
+  /* ── Two-column: phone + annotations ── */
+  .row{
+    display:grid;grid-template-columns:390px 1fr;gap:24px;
+    align-items:start;margin-bottom:0;
+  }
+
+  /* ── Phone frame ── */
+  .phone-wrap{position:sticky;top:64px}
+  .phone-frame{
+    width:390px;
+    background:#fff;
+    border-radius:40px;
+    box-shadow:0 0 0 10px #1a1a1a, 0 20px 60px rgba(0,0,0,.35);
+    overflow:hidden;
+    position:relative;
+  }
+  .phone-notch{
+    background:#1a1a1a;height:34px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .phone-notch::before{
+    content:'';width:90px;height:24px;
+    background:#000;border-radius:0 0 18px 18px;
+    display:block;
+  }
+  .phone-screen{
+    overflow-y:auto;
+    max-height:calc(100vh - 180px);
+    background:#fff;
+  }
+  .phone-home-bar{
+    background:#fff;height:34px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .phone-home-bar::before{
+    content:'';width:120px;height:4px;
+    background:#1a1a1a;border-radius:4px;
+    display:block;
+  }
+
+  /* ── Annotation sidebar ── */
+  .annotations{
+    display:flex;flex-direction:column;gap:0;
+  }
+  .ann-block{
+    border-left:3px solid transparent;
+    padding:14px 0 14px 14px;
+    border-bottom:1px solid #e8e8e8;
+  }
+  .ann-block:last-child{border-bottom:none}
+  .ann-block.critical{border-color:#e85d00}
+  .ann-block.new-block{border-color:#b54708}
+  .ann-block.improvement{border-color:#d4a855}
+  .ann-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:20px;height:20px;border-radius:50%;
+    font-size:10px;font-weight:900;color:#fff;
+    background:#e85d00;flex-shrink:0;margin-right:6px;
+  }
+  .ann-title{font-size:13px;font-weight:800;color:#1a1a1a;margin-bottom:4px;display:flex;align-items:center}
+  .ann-body{font-size:12px;color:#555;line-height:1.5}
+  .ann-tag{
+    display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;
+    padding:2px 7px;border-radius:999px;margin-bottom:6px;letter-spacing:.05em;
+  }
+  .tag-red{background:#fef2ef;color:#e85d00}
+  .tag-orange{background:#fff4ea;color:#b54708}
+  .tag-yellow{background:#fffbea;color:#a07000}
+  .tag-mobile{background:#e8f0fe;color:#2255cc}
+
+  /* ── Summary panel ── */
+  .summary{
+    background:#1a1a1a;color:#fff;
+    border-radius:12px;padding:32px;margin-top:40px;
+  }
+  .summary h2{font-size:18px;font-weight:900;margin-bottom:24px;border-bottom:1px solid #333;padding-bottom:12px}
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  .sum-col h3{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+  .sum-col h3.red{color:#e85d00}
+  .sum-col h3.orange{color:#d4a855}
+  .sum-col h3.blue{color:#6aadff}
+  .sum-item{font-size:12px;color:#aaa;padding:6px 0;border-bottom:1px solid #2a2a2a;line-height:1.4}
+  .sum-item strong{color:#fff;display:block;margin-bottom:2px}
+
+  /* ──────────────────────────────────────
+     MOBILE SCREEN SECTIONS (inside phone)
+  ────────────────────────────────────── */
+
+  /* Header mobile */
+  .m-header{
+    background:#1a1a1a;padding:0 16px;height:52px;
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:10;
+  }
+  .m-logo{color:#fff;font-weight:900;font-size:14px;letter-spacing:.08em}
+  .m-hamburger{
+    display:flex;flex-direction:column;gap:4px;cursor:default;
+    background:transparent;border:none;padding:4px;
+  }
+  .m-hamburger span{display:block;width:20px;height:2px;background:#fff;border-radius:2px}
+  .m-cta-header{
+    background:#fff;color:#1a1a1a;font-size:11px;font-weight:800;
+    padding:6px 14px;border-radius:4px;border:none;cursor:default;
+  }
+
+  /* Sticky bottom CTA */
+  .m-sticky-cta{
+    background:linear-gradient(to top,#fff 70%,rgba(255,255,255,0));
+    padding:12px 16px 16px;
+    text-align:center;
+  }
+  .m-sticky-btn{
+    width:100%;background:#1a1a1a;color:#fff;
+    font-size:14px;font-weight:800;padding:14px;
+    border-radius:8px;border:none;cursor:default;
+  }
+  .m-sticky-copy{font-size:10px;color:#aaa;margin-top:6px}
+
+  /* Hero mobile */
+  .m-hero{
+    background:linear-gradient(160deg,#1a1a1a 0%,#2d2d2d 100%);
+    padding:28px 16px 32px;
+  }
+  .m-hero-tag{
+    background:rgba(255,255,255,.12);color:#ccc;
+    font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 10px;border-radius:999px;display:inline-block;margin-bottom:14px;
+  }
+  .m-hero h1{font-size:28px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:12px}
+  .m-hero h1 span{color:#d4a855}
+  .m-hero-sub{font-size:13px;color:#aaa;line-height:1.5;margin-bottom:16px}
+  .m-hero-bullets{display:flex;flex-direction:column;gap:6px;margin-bottom:20px}
+  .m-hero-bullet{
+    display:flex;align-items:center;gap:8px;
+    font-size:12px;color:#ccc;font-weight:500;
+  }
+  .m-hero-bullet::before{content:'✓';color:#d4a855;font-weight:900;font-size:12px;flex-shrink:0}
+  .m-hero-cta{
+    width:100%;background:#fff;color:#1a1a1a;
+    font-size:14px;font-weight:900;padding:14px;
+    border-radius:6px;border:none;cursor:default;margin-bottom:8px;
+  }
+  .m-hero-cta-sec{
+    width:100%;background:transparent;color:#aaa;
+    font-size:13px;font-weight:700;padding:10px;
+    border-radius:6px;border:1px solid #444;cursor:default;
+  }
+  .m-hero-micro{font-size:11px;color:#555;margin-top:8px;text-align:center}
+
+  /* Trust strip mobile */
+  .m-trust{
+    background:#fff;padding:16px;
+    overflow-x:auto;
+    display:flex;gap:0;
+    border-bottom:1px solid #eee;
+  }
+  .m-trust-item{
+    flex-shrink:0;display:flex;flex-direction:column;align-items:center;
+    text-align:center;padding:8px 16px;min-width:90px;
+    border-right:1px solid #eee;
+  }
+  .m-trust-item:last-child{border-right:none}
+  .m-trust-num{font-size:15px;font-weight:900;color:#1a1a1a}
+  .m-trust-lbl{font-size:9px;color:#999;font-weight:600;margin-top:2px;line-height:1.2}
+
+  /* How it works mobile */
+  .m-hiw{background:#f9f9f9;padding:28px 16px}
+  .m-section-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--anno);margin-bottom:8px}
+  .m-section-title{font-size:22px;font-weight:900;color:#1a1a1a;line-height:1.1;margin-bottom:8px}
+  .m-section-sub{font-size:13px;color:#777;line-height:1.5;margin-bottom:20px}
+  .m-steps{display:flex;flex-direction:column;gap:0}
+  .m-step{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:14px 0;border-bottom:1px solid #eee;
+  }
+  .m-step:last-child{border-bottom:none}
+  .m-step-num{
+    width:32px;height:32px;border-radius:50%;
+    background:#1a1a1a;color:#fff;
+    font-size:13px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    margin-top:2px;
+  }
+  .m-step-title{font-size:13px;font-weight:800;color:#1a1a1a;margin-bottom:3px}
+  .m-step-desc{font-size:12px;color:#777;line-height:1.4}
+
+  /* Segments mobile */
+  .m-segs{background:#fff;padding:28px 16px}
+  .m-seg-card{
+    background:#f5f5f5;border-radius:10px;padding:16px;margin-bottom:12px;
+  }
+  .m-seg-card:last-child{margin-bottom:0}
+  .m-seg-emoji{font-size:22px;margin-bottom:8px}
+  .m-seg-title{font-size:15px;font-weight:900;color:#1a1a1a;margin-bottom:6px}
+  .m-seg-desc{font-size:12px;color:#666;line-height:1.5;margin-bottom:10px}
+  .m-seg-cta{font-size:12px;font-weight:800;color:var(--anno)}
+
+  /* Benefits mobile */
+  .m-benefits{background:#1a1a1a;padding:28px 16px}
+  .m-benefit-item{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:12px 0;border-bottom:1px solid #2a2a2a;
+  }
+  .m-benefit-item:last-child{border-bottom:none}
+  .m-benefit-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+  .m-benefit-title{font-size:13px;font-weight:800;color:#fff;margin-bottom:3px}
+  .m-benefit-desc{font-size:12px;color:#888;line-height:1.4}
+
+  /* Price mobile */
+  .m-price{background:#fff;padding:28px 16px}
+  .m-price-card{
+    background:#f5f5f5;border-radius:10px;padding:14px;margin-bottom:10px;
+  }
+  .m-price-card:last-child{margin-bottom:0}
+  .m-price-route{font-size:12px;color:#888;font-weight:600;margin-bottom:4px}
+  .m-price-num{font-size:24px;font-weight:900;color:#1a1a1a}
+  .m-price-note{font-size:11px;color:#aaa;margin-top:3px}
+  .m-price-disclaimer{font-size:10px;color:#bbb;margin-top:12px}
+
+  /* Social proof mobile */
+  .m-social{background:#1a1a1a;padding:28px 16px}
+  .m-logos{
+    display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;
+  }
+  .m-logo{
+    background:#2a2a2a;border-radius:6px;padding:10px;
+    text-align:center;font-size:9px;font-weight:800;color:#555;
+    letter-spacing:.04em;
+  }
+  .m-testimonial{
+    background:#222;border-radius:10px;padding:16px;
+  }
+  .m-testimonial blockquote{
+    font-size:13px;color:#ccc;line-height:1.5;font-style:italic;margin-bottom:12px;
+  }
+  .m-testimonial-author{display:flex;align-items:center;gap:10px}
+  .m-testimonial-avatar{
+    width:32px;height:32px;border-radius:50%;background:#444;flex-shrink:0;
+  }
+  .m-testimonial-name{font-size:12px;font-weight:800;color:#fff}
+  .m-testimonial-role{font-size:10px;color:#666}
+
+  /* Final CTA mobile */
+  .m-final{
+    background:#f5f5f5;padding:32px 16px;text-align:center;
+  }
+  .m-final h2{font-size:22px;font-weight:900;color:#1a1a1a;margin-bottom:8px}
+  .m-final p{font-size:13px;color:#888;margin-bottom:20px}
+  .m-final-btn{
+    width:100%;background:#1a1a1a;color:#fff;
+    font-size:14px;font-weight:900;padding:15px;
+    border-radius:8px;border:none;cursor:default;margin-bottom:8px;
+  }
+  .m-final-ghost{
+    width:100%;background:transparent;color:#888;
+    font-size:13px;font-weight:700;padding:12px;
+    border-radius:8px;border:1.5px solid #ccc;cursor:default;
+  }
+  .m-final-proof{font-size:10px;color:#bbb;margin-top:12px}
+
+  /* Footer mobile */
+  .m-footer{
+    background:#1a1a1a;padding:16px;
+    text-align:center;
+  }
+  .m-footer-copy{font-size:10px;color:#555;margin-bottom:8px}
+  .m-footer-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .m-footer-links a{font-size:10px;color:#444;text-decoration:none}
+
+  /* Responsive */
+  @media(max-width:860px){
+    .row{grid-template-columns:1fr}
+    .phone-wrap{position:static}
+    .phone-frame{width:100%;max-width:390px;margin:0 auto}
+    .summary-grid{grid-template-columns:1fr}
+    .annotations{margin-top:24px}
+  }
+</style>
+</head>
+<body>
+
+<!-- META BAR -->
+<div class="meta-bar">
+  <div>
+    <div class="label">Wireframe CRO · Propuesta de rediseño</div>
+    <div class="title">Drivania · Homepage ES · Mobile</div>
+    <div class="sub">Análisis heurístico + Clarity (75 sesiones) · Mayo 2026</div>
+  </div>
+  <div class="meta-right">
+    <div class="meta-score">
+      <div class="n">27%</div>
+      <div class="s">Score · Riesgo alto</div>
+    </div>
+    <button id="btn-pdf" onclick="window.print()">🖨 Descargar PDF</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><span>🔴</span> Crítico — impacto directo en conversión</div>
+  <div class="legend-item"><span>🟠</span> Nuevo bloque — no existe en la versión actual</div>
+  <div class="legend-item"><span>🟡</span> Mejora de copy / estructura</div>
+  <div class="legend-item"><span>📱</span> Específico de mobile</div>
+</div>
+
+<!-- ROW: phone + annotations -->
+<div class="row">
+
+  <!-- PHONE FRAME -->
+  <div class="phone-wrap">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+
+        <!-- 1. HEADER MOBILE -->
+        <div class="m-header">
+          <div class="m-logo">DRIVANIA</div>
+          <button class="m-cta-header">Solicitar acceso</button>
+          <!-- hamburger eliminado — sustituido por CTA directo -->
+        </div>
+
+        <!-- 2. HERO MOBILE -->
+        <div class="m-hero">
+          <div class="m-hero-tag">Movilidad ejecutiva premium</div>
+          <h1>Tu chofer privado,<br/>puntual y profesional.<br/><span>En +350 ciudades.</span></h1>
+          <p class="m-hero-sub">Traslados ejecutivos de confianza. Registro gratuito · Acceso en 24h.</p>
+          <div class="m-hero-bullets">
+            <div class="m-hero-bullet">Llega puntual aunque el vuelo cambie</div>
+            <div class="m-hero-bullet">Sin sorpresas de precio · Tarifa cerrada</div>
+            <div class="m-hero-bullet">WiFi y silencio en cada trayecto</div>
+          </div>
+          <button class="m-hero-cta">Solicitar acceso gratuito →</button>
+          <button class="m-hero-cta-sec">Ver cómo funciona ↓</button>
+          <p class="m-hero-micro">Registro gratuito · Sin compromiso · Respuesta en 48h</p>
+        </div>
+
+        <!-- 3. TRUST STRIP (horizontal scroll) -->
+        <div class="m-trust">
+          <div class="m-trust-item"><div class="m-trust-num">+900</div><div class="m-trust-lbl">empresas<br/>confían</div></div>
+          <div class="m-trust-item"><div class="m-trust-num">+350</div><div class="m-trust-lbl">ciudades y<br/>aeropuertos</div></div>
+          <div class="m-trust-item"><div class="m-trust-num">+20 años</div><div class="m-trust-lbl">movilidad<br/>ejecutiva</div></div>
+          <div class="m-trust-item"><div class="m-trust-num">CO₂</div><div class="m-trust-lbl">100%<br/>neutral</div></div>
+          <div class="m-trust-item"><div class="m-trust-num">IBTA</div><div class="m-trust-lbl">Premio<br/>2024</div></div>
+        </div>
+
+        <!-- 4. CÓMO FUNCIONA MOBILE -->
+        <div class="m-hiw">
+          <div class="m-section-tag">El proceso</div>
+          <div class="m-section-title">Cómo funciona</div>
+          <p class="m-section-sub">4 pasos, sin sorpresas.</p>
+          <div class="m-steps">
+            <div class="m-step">
+              <div class="m-step-num">1</div>
+              <div><div class="m-step-title">Solicita acceso</div><div class="m-step-desc">Formulario de registro en 2 minutos. Solo los datos esenciales.</div></div>
+            </div>
+            <div class="m-step">
+              <div class="m-step-num">2</div>
+              <div><div class="m-step-title">Validamos tu cuenta</div><div class="m-step-desc">Revisamos tu solicitud en 24-48h. Acceso exclusivo para perfiles ejecutivos.</div></div>
+            </div>
+            <div class="m-step">
+              <div class="m-step-num">3</div>
+              <div><div class="m-step-title">Cotiza tu traslado</div><div class="m-step-desc">Tarifas personalizadas en +350 ciudades. Precio cerrado antes de confirmar.</div></div>
+            </div>
+            <div class="m-step">
+              <div class="m-step-num">4</div>
+              <div><div class="m-step-title">Reserva y viaja</div><div class="m-step-desc">Tu chofer asignado, puntual. Seguimiento en tiempo real incluido.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. SEGMENTACIÓN MOBILE -->
+        <div class="m-segs">
+          <div class="m-section-tag">Para cada necesidad</div>
+          <div class="m-section-title">¿Cómo viajas?</div>
+          <div class="m-seg-card">
+            <div class="m-seg-emoji">💼</div>
+            <div class="m-seg-title">Soy empresa</div>
+            <p class="m-seg-desc">Gestión centralizada, facturación corporativa y coordinador dedicado.</p>
+            <div class="m-seg-cta">Ver solución corporativa →</div>
+          </div>
+          <div class="m-seg-card">
+            <div class="m-seg-emoji">✈️</div>
+            <div class="m-seg-title">Soy viajero ejecutivo</div>
+            <p class="m-seg-desc">Traslados premium en +350 ciudades. Puntualidad garantizada.</p>
+            <div class="m-seg-cta">Ver servicios →</div>
+          </div>
+        </div>
+
+        <!-- 6. BENEFICIOS MOBILE -->
+        <div class="m-benefits">
+          <div class="m-section-tag" style="color:#d4a855">Por qué Drivania</div>
+          <div class="m-section-title" style="color:#fff;margin-bottom:16px">No es solo un chofer. Es tranquilidad.</div>
+          <div class="m-benefit-item">
+            <div class="m-benefit-icon">⏱</div>
+            <div><div class="m-benefit-title">Puntual aunque el vuelo cambie</div><div class="m-benefit-desc">Monitorización de vuelos en tiempo real.</div></div>
+          </div>
+          <div class="m-benefit-item">
+            <div class="m-benefit-icon">💻</div>
+            <div><div class="m-benefit-title">Trabaja en el coche</div><div class="m-benefit-desc">WiFi, silencio y privacidad. Tiempo productivo.</div></div>
+          </div>
+          <div class="m-benefit-item">
+            <div class="m-benefit-icon">💶</div>
+            <div><div class="m-benefit-title">Sin sorpresas de precio</div><div class="m-benefit-desc">Tarifa cerrada antes de confirmar.</div></div>
+          </div>
+          <div class="m-benefit-item">
+            <div class="m-benefit-icon">🛡</div>
+            <div><div class="m-benefit-title">Conductores certificados</div><div class="m-benefit-desc">Selección rigurosa, flota propia, protocolo premium.</div></div>
+          </div>
+        </div>
+
+        <!-- 7. PRICE ANCHOR MOBILE -->
+        <div class="m-price">
+          <div class="m-section-tag">Tarifas orientativas</div>
+          <div class="m-section-title">¿Cuánto cuesta?</div>
+          <p class="m-section-sub">Regístrate para ver tu precio exacto.</p>
+          <div class="m-price-card">
+            <div class="m-price-route">Aeropuerto → Centro ciudad</div>
+            <div class="m-price-num">Desde 45€</div>
+            <div class="m-price-note">Precio cerrado · Sin sorpresas</div>
+          </div>
+          <div class="m-price-card">
+            <div class="m-price-route">Traslado interprovincial</div>
+            <div class="m-price-num">Desde 180€</div>
+            <div class="m-price-note">Incluye peajes y esperas</div>
+          </div>
+          <div class="m-price-card">
+            <div class="m-price-route">Corporativo · Por horas</div>
+            <div class="m-price-num">Desde 65€/h</div>
+            <div class="m-price-note">Facturación corporativa disponible</div>
+          </div>
+          <p class="m-price-disclaimer">* Precios orientativos. El precio exacto se calcula al introducir ruta y fecha.</p>
+        </div>
+
+        <!-- 8. SOCIAL PROOF MOBILE -->
+        <div class="m-social">
+          <div class="m-section-tag" style="color:#d4a855">Confían en Drivania</div>
+          <div class="m-section-title" style="color:#fff;margin-bottom:16px">+900 empresas en todo el mundo</div>
+          <div class="m-logos">
+            <div class="m-logo">EMPRESA 1</div>
+            <div class="m-logo">EMPRESA 2</div>
+            <div class="m-logo">EMPRESA 3</div>
+            <div class="m-logo">EMPRESA 4</div>
+            <div class="m-logo">EMPRESA 5</div>
+            <div class="m-logo">EMPRESA 6</div>
+          </div>
+          <div class="m-testimonial">
+            <blockquote>"Drivania ha transformado cómo gestionamos los traslados de nuestro equipo directivo. Puntualidad impecable y sin una sola incidencia en 2 años."</blockquote>
+            <div class="m-testimonial-author">
+              <div class="m-testimonial-avatar"></div>
+              <div>
+                <div class="m-testimonial-name">Nombre Apellido</div>
+                <div class="m-testimonial-role">Director de Operaciones · Fortune 500</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. FINAL CTA MOBILE -->
+        <div class="m-final">
+          <div class="m-section-tag">Acceso exclusivo</div>
+          <h2>Empieza a viajar<br/>con Drivania</h2>
+          <p>Registro gratuito · Sin compromiso · Acceso en 24-48h</p>
+          <button class="m-final-btn">Solicitar acceso →</button>
+          <button class="m-final-ghost">Hablar con ventas</button>
+          <p class="m-final-proof">900 empresas confían · IBTA 2024 · CO₂ Neutral</p>
+        </div>
+
+        <!-- FOOTER MOBILE -->
+        <div class="m-footer">
+          <div class="m-footer-copy">© 2026 Drivania Chauffeurs</div>
+          <div class="m-footer-links">
+            <a href="#">Legal</a>
+            <a href="#">Privacidad</a>
+            <a href="#">Cookies</a>
+          </div>
+        </div>
+
+        <!-- STICKY BOTTOM CTA (floating bar) -->
+        <div class="m-sticky-cta" id="sticky-cta-note" style="position:sticky;bottom:0;background:linear-gradient(to top,#fff 80%,rgba(255,255,255,0));padding:12px 16px 16px;border-top:none">
+          <div style="font-size:9px;font-weight:800;text-transform:uppercase;color:var(--anno);letter-spacing:.05em;text-align:center;margin-bottom:6px">📱 CTA flotante fijo · Siempre visible</div>
+          <button class="m-sticky-btn">Solicitar acceso gratuito →</button>
+          <div class="m-sticky-copy">Registro gratuito · Sin compromiso</div>
+        </div>
+
+      </div><!-- /phone-screen -->
+      <div class="phone-home-bar"></div>
+    </div><!-- /phone-frame -->
+  </div><!-- /phone-wrap -->
+
+  <!-- ANNOTATIONS SIDEBAR -->
+  <div class="annotations">
+
+    <div class="ann-block critical">
+      <div class="ann-tag tag-red">🔴 Crítico</div>
+      <div class="ann-title"><span class="ann-num">1</span> Header: CTA directo, sin hamburger</div>
+      <div class="ann-body">En mobile el hamburger oculta <em>todo</em>: navegación y CTA. El header propuesto elimina el menú y pone directamente el botón "Solicitar acceso". Clarity mobile: 0% de clics en hamburger en las sesiones analizadas. El usuario no lo busca.</div>
+    </div>
+
+    <div class="ann-block critical">
+      <div class="ann-tag tag-red">🔴 Crítico</div>
+      <div class="ann-title"><span class="ann-num">2</span> Hero: H1 beneficio + CTA correcto</div>
+      <div class="ann-body">Misma corrección que desktop pero más urgente en mobile: el H1 debe caber en pantalla sin scroll lateral. La imagen se elimina (ocupa el 60% del viewport en mobile actual, empuja el CTA fuera del fold). CTA "Solicitar acceso" en lugar de "Reservar ahora".</div>
+    </div>
+
+    <div class="ann-block critical">
+      <div class="ann-tag tag-mobile">📱 Específico mobile</div>
+      <div class="ann-title">CTA flotante fijo (sticky bottom)</div>
+      <div class="ann-body">En mobile el usuario hace scroll largo sin punto de reenganche. Un botón pegado al bottom del viewport mantiene la conversión accesible en todo momento. Patrón probado: apps como Airbnb, Booking.com. Estimación de impacto: +15-25% en form start rate.</div>
+    </div>
+
+    <div class="ann-block new-block">
+      <div class="ann-tag tag-orange">🟠 Nuevo</div>
+      <div class="ann-title"><span class="ann-num">3</span> Trust strip: scroll horizontal</div>
+      <div class="ann-body">5 píldoras de credenciales con overflow-x: scroll. En mobile no caben en grid — el scroll horizontal es natural. El usuario descubre las credenciales con un swipe. Alternativa: 2×2 grid + último elemento centrado.</div>
+    </div>
+
+    <div class="ann-block new-block">
+      <div class="ann-tag tag-orange">🟠 Nuevo</div>
+      <div class="ann-title"><span class="ann-num">4</span> Cómo funciona: steps verticales</div>
+      <div class="ann-body">Los 4 pasos en lista vertical, no en columnas. Cada paso ocupa el ancho completo de la pantalla. Elimina la disonancia del usuario que no entiende por qué no puede reservar directamente. Clarity mobile: 55% de sesiones con 0 clics — la mayoría desde móvil.</div>
+    </div>
+
+    <div class="ann-block improvement">
+      <div class="ann-tag tag-yellow">🟡 Mejora</div>
+      <div class="ann-title"><span class="ann-num">5</span> Segmentación: cards apiladas</div>
+      <div class="ann-body">En desktop era grid 2 columnas. En mobile se apilan. El usuario elige su perfil (empresa / viajero) y el journey posterior se adapta. Reduce bounce de usuarios que no se identifican con el mensaje genérico actual.</div>
+    </div>
+
+    <div class="ann-block improvement">
+      <div class="ann-tag tag-yellow">🟡 Mejora</div>
+      <div class="ann-title"><span class="ann-num">6</span> Beneficios: lista compacta dark</div>
+      <div class="ann-body">En mobile la imagen del bloque de beneficios desaparece. La lista de beneficios ocupa todo el ancho. Fondo oscuro crea contraste visual y sección de "respiro" entre bloques claros. Copy conectado con motivaciones reales, no con features.</div>
+    </div>
+
+    <div class="ann-block new-block">
+      <div class="ann-tag tag-orange">🟠 Nuevo</div>
+      <div class="ann-title"><span class="ann-num">7</span> Anclaje de precio</div>
+      <div class="ann-body">Cards apiladas con precio orientativo. Clave en mobile: el usuario consulta precios de traslados desde el móvil antes de decidir. Sin referencia de precio, el proceso de registro es una barrera invisible. Con precio: "regístrate para ver tu precio exacto" = incentivo claro.</div>
+    </div>
+
+    <div class="ann-block critical">
+      <div class="ann-tag tag-red">🔴 Crítico</div>
+      <div class="ann-title"><span class="ann-num">8</span> Social proof: logos + testimonial</div>
+      <div class="ann-body">Grid 3 columnas de logos + testimonial completo. Logos en mobile se adaptan a 3×2. "TRUST DRIVEN" actual = etiqueta vacía sin valor. Las sesiones largas sin conversión en Clarity confirman que los usuarios buscan esta señal y no la encuentran. Añadir ratings (Trustpilot / Google) sería un refuerzo adicional.</div>
+    </div>
+
+    <div class="ann-block improvement">
+      <div class="ann-tag tag-mobile">📱 Específico mobile</div>
+      <div class="ann-title">Eliminación de imagen en el hero</div>
+      <div class="ann-body">En mobile la imagen hero empuja el CTA fuera del viewport (below the fold). Scroll map de Clarity: en mobile los usuarios no llegan al CTA actual. Eliminar la imagen en mobile y centrar el texto + CTA aumenta la visibilidad del mensaje principal y del botón de conversión.</div>
+    </div>
+
+    <div class="ann-block improvement">
+      <div class="ann-tag tag-mobile">📱 Específico mobile</div>
+      <div class="ann-title">Reducción de bullets en hero</div>
+      <div class="ann-body">En desktop: 4 bullets de valor. En mobile: 3 bullets (se elimina el menos urgente). Cada bullet en mobile ocupa más espacio vertical. El objetivo es mantener H1 + 3 bullets + CTA dentro del primer scroll visible (aprox. 700px de viewport height).</div>
+    </div>
+
+  </div><!-- /annotations -->
+</div><!-- /row -->
+
+
+<!-- SUMMARY PANEL -->
+<div class="summary">
+  <h2>📋 Resumen · Cambios mobile vs. desktop</h2>
+  <div class="summary-grid">
+
+    <div class="sum-col">
+      <h3 class="red">🔴 Críticos (mobile)</h3>
+      <div class="sum-item"><strong>Header sin hamburger</strong>CTA "Solicitar acceso" visible en header sin necesidad de desplegar menú</div>
+      <div class="sum-item"><strong>Hero sin imagen</strong>La imagen empuja el CTA below the fold. Se elimina en mobile para mantener H1 + CTA visibles</div>
+      <div class="sum-item"><strong>Social proof</strong>Logos + testimonial reales. "TRUST DRIVEN" vacío no genera confianza</div>
+      <div class="sum-item"><strong>CTA sticky bottom</strong>Botón flotante fijo siempre visible durante el scroll. Patrón de máximo impacto en mobile</div>
+    </div>
+
+    <div class="sum-col">
+      <h3 class="orange">🟠 Nuevos bloques</h3>
+      <div class="sum-item"><strong>Trust strip (scroll horizontal)</strong>5 credenciales swipeables bajo el hero</div>
+      <div class="sum-item"><strong>Cómo funciona (4 steps)</strong>Elimina la disonancia del journey no explicado. Crítico: 55% sesiones con 0 clics</div>
+      <div class="sum-item"><strong>Anclaje de precio</strong>Cards apiladas con precio orientativo. Convierte el registro en un incentivo</div>
+    </div>
+
+    <div class="sum-col">
+      <h3 class="blue">📱 Específico mobile</h3>
+      <div class="sum-item"><strong>3 bullets en hero (vs 4 desktop)</strong>Más espacio vertical disponible. CTA siempre above the fold</div>
+      <div class="sum-item"><strong>Segmentación apilada</strong>Cards empresa/viajero en columna única</div>
+      <div class="sum-item"><strong>Benefits sin imagen</strong>Lista compacta en fondo oscuro, sin imagen lateral</div>
+      <div class="sum-item"><strong>Trust strip con overflow-x</strong>Scroll horizontal nativo para las 5 píldoras de credenciales</div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /page-wrap -->
+</body>
+</html>

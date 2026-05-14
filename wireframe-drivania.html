@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Wireframe Propuesta · Drivania Home</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,ui-sans-serif,system-ui,sans-serif;background:#f0f0f0;color:#1a1a1a}
+  /* Wireframe palette */
+  :root{
+    --wire-dark:#1a1a1a;
+    --wire-mid:#555;
+    --wire-light:#888;
+    --wire-border:#bbb;
+    --wire-bg:#e8e8e8;
+    --wire-white:#f9f9f9;
+    --wire-accent:#333;
+    --anno:#e85d00;
+  }
+  /* Annotation pill */
+  .anno{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--anno);color:#fff;
+    font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    padding:3px 10px;border-radius:999px;margin-bottom:10px;
+  }
+  .anno-note{
+    font-size:12px;color:var(--anno);font-weight:700;
+    border-left:3px solid var(--anno);padding-left:8px;margin-top:6px;line-height:1.5;
+  }
+  .label{font-size:11px;color:var(--wire-light);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px}
+
+  /* Layout blocks */
+  section{position:relative}
+  .wire-block{background:var(--wire-bg);border:1.5px dashed var(--wire-border);border-radius:4px}
+
+  /* ────────────── HEADER ────────────── */
+  .header{
+    background:var(--wire-dark);padding:0 48px;height:60px;
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:10;border-bottom:2px solid #333
+  }
+  .header-logo{color:#fff;font-weight:900;font-size:18px;letter-spacing:.1em}
+  .header-nav{display:flex;gap:28px}
+  .header-nav a{color:#ccc;font-size:13px;font-weight:600;text-decoration:none;cursor:default}
+  .header-nav a:hover{color:#fff}
+  .header-ctas{display:flex;gap:10px;align-items:center}
+  .btn-ghost{background:transparent;border:1.5px solid #555;color:#ccc;padding:7px 18px;border-radius:4px;font-size:13px;font-weight:700;cursor:default}
+  .btn-primary{background:#fff;border:none;color:#1a1a1a;padding:8px 20px;border-radius:4px;font-size:13px;font-weight:800;cursor:default}
+
+  /* ────────────── HERO ────────────── */
+  .hero{
+    background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);
+    min-height:600px;padding:80px 48px;
+    display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .hero::after{
+    content:'';position:absolute;right:0;top:0;width:50%;height:100%;
+    background:var(--wire-bg);opacity:.08;
+  }
+  .hero-left{position:relative;z-index:2}
+  .hero-tag{background:#fff2;color:#ddd;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:999px;display:inline-block;margin-bottom:18px}
+  .hero h1{font-size:46px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-.03em;margin-bottom:16px}
+  .hero h1 span{color:#d4a855}
+  .hero-sub{font-size:16px;color:#aaa;line-height:1.6;margin-bottom:28px;max-width:480px}
+  .hero-bullets{display:flex;flex-direction:column;gap:8px;margin-bottom:32px}
+  .hero-bullet{display:flex;align-items:center;gap:10px;font-size:14px;color:#ccc;font-weight:500}
+  .hero-bullet::before{content:'✓';color:#d4a855;font-weight:900;font-size:14px;flex-shrink:0}
+  .hero-ctas{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .hero-cta-primary{background:#fff;color:#1a1a1a;font-weight:900;font-size:15px;padding:14px 28px;border-radius:6px;cursor:default;border:none}
+  .hero-cta-secondary{background:transparent;color:#ddd;font-weight:700;font-size:14px;padding:14px 20px;border:1.5px solid #555;border-radius:6px;cursor:default}
+  .hero-microcopy{font-size:12px;color:#666;margin-top:12px}
+  .hero-right{position:relative;z-index:2}
+  .hero-image-placeholder{
+    background:var(--wire-bg);border:2px dashed var(--wire-border);
+    border-radius:8px;height:380px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    color:var(--wire-light);font-size:13px;font-weight:600;
+  }
+  .hero-image-placeholder svg{opacity:.3}
+
+  /* ────────────── TRUST STRIP ────────────── */
+  .trust-strip{
+    background:var(--wire-white);border-top:2px solid var(--wire-border);border-bottom:2px solid var(--wire-border);
+    padding:20px 48px;
+    display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap
+  }
+  .trust-item{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--wire-mid)}
+  .trust-icon{width:32px;height:32px;background:var(--wire-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .trust-divider{width:1px;height:32px;background:var(--wire-border)}
+
+  /* ────────────── HOW IT WORKS ────────────── */
+  .how-it-works{background:var(--wire-white);padding:72px 48px;text-align:center}
+  .section-tag{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--wire-light);margin-bottom:10px}
+  .section-title{font-size:32px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px}
+  .section-sub{font-size:15px;color:var(--wire-light);max-width:520px;margin:0 auto 48px}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:40px}
+  .step{position:relative;padding-top:16px}
+  .step-num{width:44px;height:44px;background:var(--wire-dark);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;margin:0 auto 16px}
+  .step-title{font-size:15px;font-weight:800;margin-bottom:8px}
+  .step-desc{font-size:13px;color:var(--wire-light);line-height:1.5}
+  .step-connector{position:absolute;top:38px;left:calc(50% + 22px);width:calc(100% - 44px);height:2px;background:var(--wire-border);z-index:0}
+  .step:last-child .step-connector{display:none}
+
+  /* ────────────── BENEFITS ────────────── */
+  .benefits{background:var(--wire-bg);padding:72px 48px}
+  .benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1100px;margin:0 auto}
+  .benefit-list{display:flex;flex-direction:column;gap:20px;margin-top:32px}
+  .benefit-item{display:flex;gap:16px;align-items:flex-start}
+  .benefit-icon{width:40px;height:40px;background:var(--wire-dark);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .benefit-text h4{font-size:15px;font-weight:800;margin-bottom:4px}
+  .benefit-text p{font-size:13px;color:var(--wire-light);line-height:1.5}
+  .benefits-image{background:var(--wire-border);border-radius:8px;height:380px;display:flex;align-items:center;justify-content:center;color:var(--wire-light);font-size:13px;font-weight:600}
+
+  /* ────────────── SEGMENTS ────────────── */
+  .segments{background:var(--wire-white);padding:72px 48px}
+  .segments-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px;max-width:900px;margin-left:auto;margin-right:auto}
+  .segment-card{border:2px solid var(--wire-border);border-radius:8px;padding:32px;text-align:center;cursor:default}
+  .segment-card:hover{border-color:var(--wire-dark)}
+  .segment-emoji{font-size:36px;margin-bottom:14px}
+  .segment-title{font-size:20px;font-weight:900;margin-bottom:8px}
+  .segment-desc{font-size:13px;color:var(--wire-light);line-height:1.5;margin-bottom:20px}
+  .segment-cta{background:var(--wire-dark);color:#fff;padding:10px 20px;border-radius:4px;font-size:13px;font-weight:700;display:inline-block}
+
+  /* ────────────── SOCIAL PROOF ────────────── */
+  .social-proof{background:var(--wire-dark);padding:72px 48px;color:#fff;text-align:center}
+  .social-proof .section-tag{color:#777}
+  .social-proof .section-title{color:#fff}
+  .logos-row{display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap;margin:36px 0}
+  .logo-placeholder{background:#333;border-radius:6px;width:100px;height:36px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;font-weight:700;letter-spacing:.05em}
+  .testimonial{background:#222;border:1px solid #333;border-radius:12px;padding:28px;max-width:600px;margin:0 auto;text-align:left}
+  .testimonial blockquote{font-size:16px;color:#ddd;line-height:1.6;margin-bottom:16px;font-style:italic}
+  .testimonial-author{display:flex;align-items:center;gap:12px}
+  .testimonial-avatar{width:40px;height:40px;background:#444;border-radius:50%}
+  .testimonial-name{font-size:13px;font-weight:700;color:#fff}
+  .testimonial-role{font-size:12px;color:#777}
+
+  /* ────────────── PRICE ANCHOR ────────────── */
+  .price-anchor{background:var(--wire-white);padding:56px 48px;text-align:center}
+  .price-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:800px;margin:32px auto 0}
+  .price-card{border:2px solid var(--wire-border);border-radius:8px;padding:24px}
+  .price-card .route{font-size:12px;color:var(--wire-light);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .price-card .price{font-size:28px;font-weight:900;letter-spacing:-.03em;margin-bottom:4px}
+  .price-card .price-note{font-size:12px;color:var(--wire-light)}
+
+  /* ────────────── FINAL CTA ────────────── */
+  .final-cta{background:linear-gradient(135deg,#1a1a1a,#2d2d2d);padding:80px 48px;text-align:center;color:#fff}
+  .final-cta h2{font-size:36px;font-weight:900;letter-spacing:-.03em;margin-bottom:12px}
+  .final-cta p{font-size:16px;color:#aaa;margin-bottom:32px}
+  .final-cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .final-btn-primary{background:#fff;color:#1a1a1a;font-weight:900;font-size:16px;padding:16px 36px;border-radius:6px;cursor:default}
+  .final-btn-ghost{background:transparent;color:#ccc;font-weight:700;font-size:15px;padding:16px 24px;border:1.5px solid #444;border-radius:6px;cursor:default}
+
+  /* ────────────── FOOTER ────────────── */
+  .footer{background:#111;padding:24px 48px;display:flex;justify-content:space-between;align-items:center}
+  .footer-copy{font-size:12px;color:#555}
+  .footer-links{display:flex;gap:20px}
+  .footer-links a{font-size:12px;color:#555;text-decoration:none}
+
+  /* ────────────── ANNOTATIONS PANEL ────────────── */
+  .annotations-panel{background:#fff;border-left:4px solid var(--anno);padding:32px 40px;margin:0}
+  .annotations-panel h2{font-size:22px;font-weight:900;margin-bottom:24px;color:#1a1a1a}
+  .annotation-item{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #eee}
+  .annotation-item:last-child{border-bottom:none}
+  .annotation-num{display:inline-block;background:var(--anno);color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:900;text-align:center;line-height:22px;margin-right:8px;flex-shrink:0}
+  .annotation-title{font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:4px}
+  .annotation-text{font-size:13px;color:#555;line-height:1.5}
+
+  /* Floating annotation badge */
+  .change-badge{
+    position:absolute;top:-12px;right:-12px;
+    background:var(--anno);color:#fff;
+    font-size:10px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;
+    padding:3px 8px;border-radius:999px;z-index:10;white-space:nowrap;
+  }
+
+  @media(max-width:900px){
+    .steps{grid-template-columns:1fr 1fr}
+    .benefits-grid{grid-template-columns:1fr}
+    .segments-grid{grid-template-columns:1fr}
+    .price-cards{grid-template-columns:1fr}
+    .hero{grid-template-columns:1fr;padding:48px 24px}
+    .hero-right{display:none}
+    .trust-strip{gap:20px;padding:20px 24px}
+    .header{padding:0 20px}
+    .header-nav{display:none}
+  }
+
+  /* ── PDF button ── */
+  #btn-pdf{
+    background:#e85d00;color:#fff;border:none;
+    padding:10px 22px;border-radius:6px;
+    font-size:13px;font-weight:800;cursor:pointer;
+    display:flex;align-items:center;gap:8px;
+    transition:background .2s;
+  }
+  #btn-pdf:hover{background:#c44d00}
+
+  /* ── Print / PDF styles ── */
+  @media print{
+    #btn-pdf{display:none!important}
+    body{background:#fff}
+    .header{position:relative!important}
+    .change-badge{display:none}
+    .anno{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     WIREFRAME HEADER + META INFO
+════════════════════════════════════════════ -->
+<div style="background:#1a1a1a;color:#fff;padding:20px 48px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--anno)">
+  <div>
+    <div style="font-size:11px;color:#e85d00;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Wireframe CRO · Propuesta de rediseño</div>
+    <div style="font-size:20px;font-weight:900">Drivania · Homepage ES · Desktop</div>
+    <div style="font-size:12px;color:#666;margin-top:4px">Basado en análisis heurístico + datos Clarity (75 sesiones) · Mayo 2026</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:24px">
+    <div style="text-align:right">
+      <div style="font-size:12px;color:#666">Score actual</div>
+      <div style="font-size:28px;font-weight:900;color:#e85d00">27%</div>
+      <div style="font-size:11px;color:#666">Riesgo alto</div>
+    </div>
+    <button id="btn-pdf" onclick="window.print()">
+      🖨 Descargar PDF
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     1. HEADER
+════════════════════════════════════════════ -->
+<div style="position:relative">
+  <div class="change-badge" style="position:absolute;top:12px;left:48px;z-index:20">🔴 Cambio 1 · Header</div>
+  <header class="header">
+    <div class="header-logo">DRIVANIA <span style="font-weight:400;font-size:14px;color:#666">Chauffeurs</span></div>
+    <nav class="header-nav">
+      <a href="#">Servicios</a>
+      <a href="#">Destinos</a>
+      <a href="#">Empresas</a>
+      <a href="#">Cómo funciona</a>
+      <a href="#">Tarifas</a>
+    </nav>
+    <div class="header-ctas">
+      <button class="btn-ghost">Mi cuenta</button>
+      <button class="btn-primary">Solicitar acceso →</button>
+    </div>
+  </header>
+  <div class="anno-note" style="background:#fff8f5;padding:10px 48px;font-size:12px">
+    <span style="color:var(--anno);font-weight:800">✏ Cambio 1:</span> Nav visible en desktop (actualmente oculta en hamburger → 0 orientación). CTA "Solicitar acceso" en header — recurrentes y nuevos usuarios lo encuentran sin scroll.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     2. HERO
+════════════════════════════════════════════ -->
+<section style="position:relative">
+  <div class="change-badge" style="top:20px;left:20px">🔴 Cambio 2 · Hero</div>
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">Movilidad ejecutiva premium</div>
+      <h1>Tu chofer privado,<br/>puntual y profesional.<br/><span>En +350 ciudades.</span></h1>
+      <p class="hero-sub">Accede a traslados ejecutivos de confianza en todo el mundo. Registro gratuito · Acceso en 24h.</p>
+      <div class="hero-bullets">
+        <div class="hero-bullet">Llega puntual aunque el vuelo cambie</div>
+        <div class="hero-bullet">Trabaja en el coche · WiFi y silencio garantizados</div>
+        <div class="hero-bullet">Sin sorpresas de precio · Tarifa cerrada</div>
+        <div class="hero-bullet">Conductores certificados · Flota propia</div>
+      </div>
+      <div class="hero-ctas">
+        <button class="hero-cta-primary">Solicitar acceso gratuito →</button>
+        <button class="hero-cta-secondary">Ver cómo funciona</button>
+      </div>
+      <div class="hero-microcopy">Registro gratuito · Sin compromiso · Respuesta en 48h</div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-image-placeholder">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-4 4 4"/><circle cx="8" cy="14" r="2"/><path d="M21 15l-4-4-4 4"/></svg>
+        Imagen · Chofer + coche ejecutivo<br/>
+        <span style="font-size:11px;opacity:.6">Ambiente premium · Aeropuerto o ciudad</span>
+      </div>
+    </div>
+  </div>
+  <div class="anno-note" style="background:#fff8f5;padding:10px 48px;font-size:12px">
+    <span style="color:var(--anno);font-weight:800">✏ Cambio 2:</span> H1 con beneficio tangible (no feature). Bullets de valor. CTA primario "Solicitar acceso" (no "Reservar ahora" — el usuario no puede reservar sin registro previo). CTA secundario "Cómo funciona" para usuarios exploratorios. Microcopy elimina incertidumbre del proceso.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     3. TRUST STRIP
+════════════════════════════════════════════ -->
+<section style="position:relative">
+  <div class="change-badge" style="top:-12px;right:40px">🟠 Nuevo · Trust strip</div>
+  <div class="trust-strip">
+    <div class="trust-item"><div class="trust-icon">🏢</div><div><div style="font-size:16px;font-weight:900">+900</div><div style="font-size:11px;color:#999;font-weight:500">empresas confían en Drivania</div></div></div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><div class="trust-icon">🌍</div><div><div style="font-size:16px;font-weight:900">+350</div><div style="font-size:11px;color:#999;font-weight:500">ciudades y aeropuertos</div></div></div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><div class="trust-icon">🏆</div><div><div style="font-size:16px;font-weight:900">+20 años</div><div style="font-size:11px;color:#999;font-weight:500">movilidad ejecutiva</div></div></div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><div class="trust-icon">🌿</div><div><div style="font-size:16px;font-weight:900">CO₂ Neutral</div><div style="font-size:11px;color:#999;font-weight:500">100% compensado por trayecto</div></div></div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><div class="trust-icon">🥇</div><div><div style="font-size:16px;font-weight:900">IBTA 2024</div><div style="font-size:11px;color:#999;font-weight:500">Premio al mejor servicio</div></div></div>
+  </div>
+  <div class="anno-note" style="background:#fff8f5;padding:10px 48px;font-size:12px">
+    <span style="color:var(--anno);font-weight:800">✏ Cambio 3 (nuevo):</span> Trust strip inmediatamente bajo el hero. Activa sesgos de autoridad (20 años, IBTA), social proof (900 empresas), escasez/exclusividad y corte noble (CO₂). Actualmente no existe ningún elemento de este tipo visible above the fold.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     4. CÓMO FUNCIONA
+════════════════════════════════════════════ -->
+<section style="position:relative">
+  <div class="change-badge" style="top:20px;right:40px">🟠 Nuevo · Cómo funciona</div>
+  <div class="how-it-works">
+    <div class="section-tag">El proceso</div>
+    <h2 class="section-title">Cómo funciona Drivania</h2>
+    <p class="section-sub">Acceso exclusivo para empresas y viajeros premium. El proceso es sencillo y rápido.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-connector"></div>
+        <div class="step-num">1</div>
+        <div class="step-title">Solicita acceso</div>
+        <p class="step-desc">Rellena el formulario de registro en menos de 2 minutos. Solo los datos esenciales.</p>
+      </div>
+      <div class="step">
+        <div class="step-connector"></div>
+        <div class="step-num">2</div>
+        <div class="step-title">Validamos tu cuenta</div>
+        <p class="step-desc">Revisamos tu solicitud en 24-48h. Acceso exclusivo para perfiles ejecutivos y corporativos.</p>
+      </div>
+      <div class="step">
+        <div class="step-connector"></div>
+        <div class="step-num">3</div>
+        <div class="step-title">Cotiza tu traslado</div>
+        <p class="step-desc">Accede a tarifas personalizadas en +350 ciudades. Precio cerrado antes de confirmar.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-title">Reserva y viaja</div>
+        <p class="step-desc">Tu chofer asignado, puntual y profesional. Seguimiento en tiempo real incluido.</p>
+      </div>
+    </div>
+    <div style="margin-top:40px">
+      <button class="hero-cta-primary" style="background:#1a1a1a;color:#fff">Solicitar acceso gratuito →</button>
+      <p style="font-size:12px;color:#aaa;margin-top:10px">Registro gratuito · Sin compromiso · Respuesta en 48h</p>
+    </div>
+  </div>
+  <div class="anno-note" style="background:#fff8f5;padding:10px 48px;font-size:12px">
+    <span style="color:var(--anno);font-weight:800">✏ Cambio 4 (nuevo):</span> El usuario no sabe que no puede reservar directamente. Este bloque elimina esa disonancia explicando el proceso real ANTES de pedir el registro. Reduce abandono post-clic. Hallazgo clave: 55% de sesiones con 0 clics — el usuario no entiende qué debe hacer.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     5. SEGMENTACIÓN
+════════════════════════════════════════════ -->
+<section style="position:relative">
+  <div class="change-badge" style="top:20px;right:40px">🟡 Mejora · Segmentación</div>
+  <div class="segments">
+    <div style="text-align:center">
+      <div class="section-tag">Para cada necesidad</div>
+      <h2 class="section-title">¿Cómo viajas?</h2>
+      <p class="section-sub">Soluciones adaptadas tanto para viajeros individuales como para equipos corporativos.</p>
+    </div>
+    <div class="segments-grid">
+      <div class="segment-card">
+        <div class="segment-emoji">💼</div>
+        <div class="segment-title">Soy empresa</div>
+        <p class="segment-desc">Gestión centralizada para equipos. Facturación corporativa, control de gastos y coordinador de cuenta dedicado.</p>
+        <div class="segment-cta">Ver solución corporativa →</div>
+      </div>
+      <div class="segment-card">
+        <div class="segment-emoji">✈️</div>
+        <div class="segment-title">Soy viajero ejecutivo</div>
+        <p class="segment-desc">Traslados premium en +350 ciudades. Puntualidad garantizada, aunque el vuelo cambie.</p>
+        <div class="segment-cta">Ver servicios →</div>
+      </div>
+    </div>
+  </div>
+  <div class="anno-note" style="background:#fff8f5;padding:10px 48px;font-size:12px">
+    <span style="color:var(--anno);font-weight:800">✏ Cambio 5:</span> Segmentación clara. Actualmente el hero habla de "negocios y vacacionales" sin diferenciar. Un usuario corporativo y un viajero individual tienen necesidades distintas. Separar los journeys mejora relevancia y reduce bounce.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     6. BENEFICIOS (no features)
+════════════════════════════════════════════ -->
+<section style="position:relative">
+  <div class="change-badge" style="top:20px;left:20px">🟡 Mejora · Copy beneficios</div>
+  <div class="benefits">
+    <div class="benefits-grid">
+      <div>
+        <div class="section-tag">Por qué Drivania</div>
+        <h2 class="section-title" style="text-align:left">No es solo un chofer.<br/>Es tranquilidad.</h2>
+        <div class="benefit-list">
+          <div class="benefit-item">
+            <div class="benefit-icon">⏱</div>
+            <div class="benefit-text">
+              <h4>Puntual aunque el vuelo cambie</h4>
+              <p>Monitorización de vuelos en tiempo real. Si hay retraso, tu chofer ya lo sabe.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">💻</div>
+            <div class="benefit-text">
+              <h4>Trabaja en el coche</h4>
+              <p>WiFi, silencio y privacidad. Cada trayecto es tiempo productivo.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">💶</div>
+            <div class="benefit-text">
+              <h4>Sin sorpresas de precio</h4>
+              <p>Tarifa cerrada antes de confirmar. Lo que ves es lo que pagas.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">🛡</div>
+            <div class="benefit-text">
+              <h4>Conductores certificados</h4>
+              <p>Selección rigurosa, flota propia y protocolo de servicio premium.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="benefits-image">Imagen · Interior coche ejecutivo / chofer</div>
+    </div>
+  </div>
+  <div class="anno-note" style="background:#fff8f5;padding:10px 48px;font-size:12px">
+    <span style="color:var(--anno);font-weight:800">✏ Cambio 6:</span> Copy orientado a beneficios reales del usuario (no "350 ciudades" ni "Trust Driven"). Cada punto responde a una objeción o motivación real. Attention map PC: el claim H1 se lee pero no genera acción — el copy actual no conecta emocionalmente.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     7. PRICE ANCHOR
+════════════════════════════════════════════ -->
+<section style="position:relative">
+  <div class="change-badge" style="top:20px;right:40px">🟡 Nuevo · Anclaje de precio</div>
+  <div class="price-anchor">
+    <div class="section-tag">Tarifas orientativas</div>
+    <h2 class="section-title">¿Cuánto cuesta?</h2>
+    <p class="section-sub" style="color:var(--wire-light);max-width:480px;margin:10px auto">Tarifas personalizadas según ruta y vehículo. Regístrate para ver tus precios exactos sin compromiso.</p>
+    <div class="price-cards">
+      <div class="price-card">
+        <div class="route">Aeropuerto → Centro ciudad</div>
+        <div class="price">Desde 45€</div>
+        <div class="price-note">Precio cerrado · Sin sorpresas</div>
+      </div>
+      <div class="price-card">
+        <div class="route">Traslado interprovincial</div>
+        <div class="price">Desde 180€</div>
+        <div class="price-note">Incluye peajes y esperas</div>
+      </div>
+      <div class="price-card">
+        <div class="route">Corporativo · Por horas</div>
+        <div class="price">Desde 65€/h</div>
+        <div class="price-note">Facturación corporativa disponible</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#aaa;margin-top:16px">* Precios orientativos. El precio exacto se calcula al introducir origen, destino y fecha.</p>
+  </div>
+  <div class="anno-note" style="background:#fff8f5;padding:10px 48px;font-size:12px">
+    <span style="color:var(--anno);font-weight:800">✏ Cambio 7 (nuevo):</span> El usuario no sabe si un traslado cuesta 30€ o 300€. Sin referencia de precio + proceso de registro obligatorio = doble barrera. Un anclaje de precio orientativo convierte la barrera del registro en un beneficio: "regístrate para ver tu precio exacto".
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     8. SOCIAL PROOF
+════════════════════════════════════════════ -->
+<section style="position:relative">
+  <div class="change-badge" style="top:20px;right:40px">🔴 Crítico · Social proof</div>
+  <div class="social-proof">
+    <div class="section-tag">Confían en Drivania</div>
+    <h2 class="section-title" style="color:#fff">+900 empresas en todo el mundo</h2>
+    <div class="logos-row">
+      <div class="logo-placeholder">EMPRESA 1</div>
+      <div class="logo-placeholder">EMPRESA 2</div>
+      <div class="logo-placeholder">EMPRESA 3</div>
+      <div class="logo-placeholder">EMPRESA 4</div>
+      <div class="logo-placeholder">EMPRESA 5</div>
+      <div class="logo-placeholder">EMPRESA 6</div>
+    </div>
+    <div class="testimonial">
+      <blockquote>"Drivania ha transformado cómo gestionamos los traslados de nuestro equipo directivo. Puntualidad impecable y sin una sola incidencia en 2 años."</blockquote>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar"></div>
+        <div>
+          <div class="testimonial-name">Nombre Apellido</div>
+          <div class="testimonial-role">Director de Operaciones · Empresa Fortune 500</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="anno-note" style="background:#fff8f5;padding:10px 48px;font-size:12px">
+    <span style="color:var(--anno);font-weight:800">✏ Cambio 8 (crítico):</span> Actualmente "TRUST DRIVEN" es solo un label. Sin reviews, logos ni testimonios en toda la home. Sesiones de 20-34 min sin conversión en Clarity confirman usuarios buscando señales de confianza que no encuentran. Social proof cerca del CTA puede incrementar CVR un 10-20%.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     9. FINAL CTA
+════════════════════════════════════════════ -->
+<section>
+  <div class="final-cta">
+    <div class="section-tag" style="color:#555">Acceso exclusivo</div>
+    <h2>Empieza a viajar con Drivania</h2>
+    <p>Registro gratuito · Sin compromiso · Acceso en 24-48h</p>
+    <div class="final-cta-buttons">
+      <button class="final-btn-primary">Solicitar acceso →</button>
+      <button class="final-btn-ghost">Hablar con ventas</button>
+    </div>
+    <p style="font-size:12px;color:#555;margin-top:16px">Más de 900 empresas ya confían en Drivania · IBTA Award 2024 · CO₂ Neutral</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-copy">© 2026 Drivania Chauffeurs. Todos los derechos reservados.</div>
+  <div class="footer-links">
+    <a href="#">Aviso Legal</a>
+    <a href="#">Política de Privacidad</a>
+    <a href="#">Términos y Condiciones</a>
+    <a href="#">Cookies</a>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     RESUMEN DE CAMBIOS
+════════════════════════════════════════════ -->
+<div class="annotations-panel">
+  <h2>📋 Resumen de cambios aplicados</h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+
+    <div>
+      <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#e85d00;margin-bottom:16px">🔴 Críticos</div>
+
+      <div class="annotation-item">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <span class="annotation-num">1</span>
+          <div>
+            <div class="annotation-title">Header · Nav visible + CTA "Solicitar acceso"</div>
+            <p class="annotation-text">Hamburger oculta toda la navegación en desktop. Se expone nav + CTA de acceso permanente. Clarity: 0 clics en el hero, los usuarios no encuentran punto de entrada.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotation-item">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <span class="annotation-num">2</span>
+          <div>
+            <div class="annotation-title">Hero · H1 con beneficio + CTA correcto + CTA secundario</div>
+            <p class="annotation-text">H1 actual solo describe el servicio. CTA "Reservar ahora" es falso — el usuario debe registrarse primero. Se corrige con "Solicitar acceso" y microcopy que explica el proceso.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotation-item">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <span class="annotation-num">8</span>
+          <div>
+            <div class="annotation-title">Social proof · Logos + testimonios</div>
+            <p class="annotation-text">"TRUST DRIVEN" es solo un label vacío. Sin reviews, ratings ni logos. Sesiones de 20-34 min sin conversión en Clarity = usuarios buscando señales de confianza que no existen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#b54708;margin-bottom:16px">🟠 Nuevos bloques</div>
+
+      <div class="annotation-item">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <span class="annotation-num">3</span>
+          <div>
+            <div class="annotation-title">Trust strip · Credenciales en 5 píldoras</div>
+            <p class="annotation-text">900 empresas, +350 ciudades, 20 años, CO₂ Neutral, IBTA 2024. Activa sesgos de autoridad, social proof y corte noble en el primer scroll.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotation-item">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <span class="annotation-num">4</span>
+          <div>
+            <div class="annotation-title">Cómo funciona · 4 pasos del journey real</div>
+            <p class="annotation-text">El usuario no sabe que debe registrarse antes de poder reservar. Explicar el flujo real reduce abandono y disonancia. Form start rate puede multiplicarse ×2-3x.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotation-item">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <span class="annotation-num">7</span>
+          <div>
+            <div class="annotation-title">Anclaje de precio · "Desde X€"</div>
+            <p class="annotation-text">Sin referencia de precio + registro obligatorio = doble barrera. Un precio orientativo convierte el registro en un beneficio: "regístrate para ver tu precio exacto".</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:24px;padding-top:24px;border-top:1px solid #eee">
+    <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:16px">🟡 Mejoras de copy / estructura</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+      <div class="annotation-item" style="border-bottom:none;padding-bottom:0">
+        <div class="annotation-title"><span class="annotation-num">5</span> Segmentación Empresa / Viajero</div>
+        <p class="annotation-text">Journeys diferenciados para corporativo e individual. Reduce bounce de usuarios que no se identifican con el mensaje único actual.</p>
+      </div>
+      <div class="annotation-item" style="border-bottom:none;padding-bottom:0">
+        <div class="annotation-title"><span class="annotation-num">6</span> Beneficios en lugar de features</div>
+        <p class="annotation-text">"350 ciudades" → "Puntual aunque el vuelo cambie". Cada punto de copy conecta con una motivación o dolor real del viajero ejecutivo.</p>
+      </div>
+      <div class="annotation-item" style="border-bottom:none;padding-bottom:0">
+        <div class="annotation-title"><span class="annotation-num">+</span> CTA final con sesgos cognitivos</div>
+        <p class="annotation-text">Final CTA refuerza exclusividad y urgencia con social proof inline: "900 empresas confían · IBTA 2024 · CO₂ Neutral".</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
