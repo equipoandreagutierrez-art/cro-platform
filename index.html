@@ -636,11 +636,11 @@ let state = { clients:{}, activeId:null };
 function uid(){ return 'a'+Math.random().toString(36).slice(2,9); }
 
 function save(){
-  try{ localStorage.setItem('croPlatformV2', JSON.stringify(state)); }catch(e){}
+  try{ localStorage.setItem('croPlatformV3', JSON.stringify(state)); }catch(e){}
 }
 function load(){
   try{
-    const raw = localStorage.getItem('croPlatformV2');
+    const raw = localStorage.getItem('croPlatformV3');
     if(raw){ state = JSON.parse(raw); }
   }catch(e){}
   if(Object.keys(state.clients).length === 0){
@@ -882,6 +882,225 @@ function load(){
         Object.assign(state.clients[id].criteria[cid], vals);
       }
     });
+
+    // ── CLIENTIFY ──────────────────────────────────────────────────────
+    const idC = createClientObj('Clientify · Webinar Landing','https://clientify.com/webinar-crm-ventas-marketing','SaaS B2B · CRM','Registros al webinar','Managers de ventas, responsables comerciales, PYMEs');
+    const clientifyScores = {
+      // 1. PROPUESTA DE VALOR
+      'value-0':{score:'2',scoreMobile:'2',impact:3,severity:2,confidence:5,effort:1,
+        evidence:'H1 "Tu embudo de ventas automático en 30\'" orientado al resultado. Se entiende en <5s qué ofrece la página y qué obtendrá el usuario. Excelente.',
+        evidenceMobile:'El H1 es corto y funciona bien en mobile. El "30\'" como unidad de tiempo es especialmente eficaz en pantallas pequeñas.',
+        rec:'Mantener el estilo del H1. Considerar añadir el destinatario explícito: "Tu embudo de ventas automático en 30\' (si gestionas un equipo comercial)".',
+        status:'Pendiente',owner:'Copy',kpi:'Bounce rate'},
+      'value-1':{score:'2',scoreMobile:'2',impact:3,severity:2,confidence:5,effort:1,
+        evidence:'El copy está completamente orientado a beneficios: "proceso montado", "resuelve tus dudas en vivo", "acceso a la grabación". El subheadline describe el dolor real del usuario antes de ofrecer la solución.',
+        evidenceMobile:'Mismo diagnóstico. El copy es conciso y escaneable en mobile.',
+        rec:'Reforzar con un bullet específico del resultado: "Sal del webinar con tu embudo configurado, no solo con teoría".',
+        status:'Pendiente',owner:'Copy',kpi:'CTR CTA principal'},
+      'value-2':{score:'1',scoreMobile:'1',impact:3,severity:2,confidence:4,effort:2,
+        evidence:'"No hace falta ser cliente de Clientify para asistir" es un diferenciador relevante que resuelve la objeción de "esto es solo publicidad de su CRM". Sin embargo, no hay diferenciación frente a otros webinars de CRM del mercado.',
+        evidenceMobile:'Mismo diagnóstico en mobile.',
+        rec:'Añadir diferenciador de metodología: "El único webinar que te da los 3 pasos exactos con plantillas listas para copiar, no solo teoría".',
+        status:'Pendiente',owner:'Copy',kpi:'CVR'},
+      'value-3':{score:'1',scoreMobile:'1',impact:3,severity:2,confidence:4,effort:2,
+        evidence:'El copy habla de "tu equipo" y "comerciales", implícitamente apuntando a managers de ventas o responsables comerciales. Pero no hay segmentación explícita: ¿es para una PYME con 2 comerciales o una empresa con 50? ¿sector servicios o ecommerce?',
+        evidenceMobile:'Mismo diagnóstico.',
+        rec:'Añadir una línea de audiencia: "Ideal si tienes un equipo de entre 1 y 20 comerciales y usas (o quieres usar) un CRM".',
+        status:'Pendiente',owner:'Copy',kpi:'CTR por segmento'},
+      'value-4':{score:'0',scoreMobile:'0',impact:3,severity:3,confidence:4,effort:2,
+        evidence:'No hay casos de uso concretos ni ejemplos de empresas que hayan implementado el embudo. Los webinars previos muestran vistas pero no resultados de quienes aplicaron el método.',
+        evidenceMobile:'Mismo problema. Sin contexto de uso real el usuario no puede imaginar si el método aplica a su situación.',
+        rec:'Añadir un mini-caso: "Como hizo [empresa X]: pasó de 3 días de seguimiento manual a 20 min/día con el embudo que vamos a montar".',
+        status:'Pendiente',owner:'Marketing',kpi:'Scroll depth'},
+
+      // 2. NAVEGACIÓN
+      'orientation-0':{score:'2',scoreMobile:'1',impact:2,severity:2,confidence:5,effort:1,
+        evidence:'Menú completo visible en desktop: Productos, Precios, Casos de uso, Recursos. Correcta orientación para usuarios que llegan de búsqueda orgánica.',
+        evidenceMobile:'En mobile probablemente hamburger. Aceptable para este tipo de landing.',
+        rec:'En mobile: considerar simplificar el header a logo + botón CTA del webinar sin hamburger, para reducir distracciones.',
+        status:'Pendiente',owner:'Dev',kpi:'CTR navegación'},
+      'orientation-1':{score:'1',scoreMobile:'1',impact:2,severity:2,confidence:4,effort:1,
+        evidence:'Los 10 casos de uso sectoriales en el menú son útiles para usuarios que exploran, pero están enterrados en un dropdown y no son visibles en la landing.',
+        evidenceMobile:'Mismo diagnóstico.',
+        rec:'Sin acción necesaria para esta landing. Los casos de uso son relevantes para la web principal.',
+        status:'Pendiente',owner:'UX',kpi:'Pages/session'},
+      'orientation-2':{score:'2',scoreMobile:'2',impact:1,severity:1,confidence:4,effort:1,
+        evidence:'El logo de Clientify probablemente linkea a la home. Correcto.',
+        rec:'Sin acción necesaria.',status:'Pendiente'},
+      'orientation-3':{score:'0',scoreMobile:'0',impact:5,severity:5,confidence:5,effort:2,
+        evidence:'CRÍTICO: El header incluye "Pide una demo" y "Empieza gratis" como CTAs destacados. Estos son CTAs del producto principal, NO del webinar. En una landing page de captación, tener 3 CTAs compitiendo ("Inscríbete", "Pide una demo", "Empieza gratis") fragmenta la atención y reduce la tasa de registro. El usuario puede hacer clic en "Pide una demo" en lugar de inscribirse al webinar, o directamente en "Empieza gratis", saltándose el nurturing del webinar.',
+        evidenceMobile:'En mobile el problema se multiplica: el espacio es limitado y los CTAs compiten en el mismo viewport.',
+        rec:'Para esta landing específica: simplificar el header a logo + "Inscríbete al webinar" solamente. Eliminar "Pide una demo" y "Empieza gratis" del header. Un usuario que llega a la landing de webinar ya tiene una intención clara; distraerle con CTAs de producto reduce el registro.',
+        hyp:'Eliminar los CTAs de producto del header en esta landing puede incrementar el registro al webinar un 15-25% al eliminar las fugas de conversión.',
+        status:'Pendiente',owner:'Dev',kpi:'CTR CTA'},
+      'orientation-4':{score:'1',scoreMobile:'1',impact:2,severity:2,confidence:4,effort:1,
+        evidence:'Los enlaces y botones son generalmente identificables. El botón CTA está destacado visualmente.',
+        rec:'Sin acción crítica.',status:'Pendiente',owner:'Dev',kpi:'Rage clicks'},
+
+      // 3. CTA
+      'cta-0':{score:'1',scoreMobile:'1',impact:4,severity:3,confidence:5,effort:1,
+        evidence:'"Inscríbete. Es GRATIS" está present above the fold en el hero. Sin embargo, el impacto del CTA se diluye porque "Pide una demo" y "Empieza gratis" en el header generan ruido visual y compiten por la atención.',
+        evidenceMobile:'En mobile el CTA del hero probablemente compite con elementos del header. El botón de inscripción puede quedar below the fold si el hero tiene mucho contenido.',
+        rec:'Asegurar que el CTA de registro sea el único elemento prominente en el primer viewport. Eliminar CTAs de producto del header en esta URL.',
+        status:'Pendiente',owner:'Dev',kpi:'CTR CTA hero'},
+      'cta-1':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'"Inscríbete. Es GRATIS" comunica la acción (inscribirse) y el beneficio principal (gratis) de forma muy concisa. Excelente copy de CTA.',
+        evidenceMobile:'Mismo diagnóstico. Funciona igual de bien en mobile.',
+        rec:'Considerar añadir el resultado: "Inscríbete gratis y recibe tu embudo en 30\'".',
+        status:'Pendiente',owner:'Copy',kpi:'CTR CTA'},
+      'cta-2':{score:'0',scoreMobile:'0',impact:4,severity:4,confidence:5,effort:1,
+        evidence:'El formulario de registro solo aparece en el hero. Un usuario que hace scroll hasta la sección de webinars anteriores, los badges de certificación o el footer no tiene oportunidad de registrarse sin volver al inicio. No hay un segundo formulario ni CTA de registro en la parte media-baja de la página.',
+        evidenceMobile:'En mobile el problema es más grave ya que el scroll es más largo. El usuario pierde el punto de entrada al flujo.',
+        rec:'Añadir al menos un CTA de registro al final de la sección "¿Por qué invertir mi tiempo?" y otro al final de la página. Puede ser un botón que haga scroll al formulario del hero o un mini-form in-line.',
+        hyp:'Repetir el CTA en 2-3 puntos de la página puede incrementar el registro entre un 10-20% al capturar usuarios que llegaron a la página en fase exploratoria.',
+        status:'Pendiente',owner:'Dev',kpi:'Lead rate'},
+      'cta-3':{score:'0',scoreMobile:'0',impact:3,severity:3,confidence:4,effort:1,
+        evidence:'No hay CTA secundario para usuarios que no están listos para registrarse pero sí para explorar más. "Llévame ahí >>" de la sección comunidad distrae más que ayuda. No hay "Ver grabación del webinar anterior" ni "Descarga la agenda del webinar".',
+        evidenceMobile:'Mismo problema en mobile.',
+        rec:'Añadir CTA secundario bajo el formulario: "¿No puedes en directo? Apúntate igual y te enviamos la grabación". Esto captura usuarios indecisos y reduce la fricción de la fecha/hora.',
+        status:'Pendiente',owner:'UX',kpi:'CTR CTA secundario'},
+      'cta-4':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:4,effort:1,
+        evidence:'El registro lleva a recibir el enlace por email, coherente con la promesa de la landing. No hay disonancia entre lo que se promete y lo que se recibe.',
+        rec:'Sin acción necesaria.',status:'Pendiente',kpi:'Drop-off post-click'},
+
+      // 4. CONFIANZA
+      'trust-0':{score:'1',scoreMobile:'1',impact:4,severity:3,confidence:5,effort:2,
+        evidence:'Social proof presente pero de tipo indirecto: vistas de webinars anteriores (#1: 4.311 vistas, #2: 1.780, #3: 1.496) y logos de partners corporativos (Google, Meta, NVIDIA, ISO). Sin embargo, no hay testimonios directos de asistentes que hayan aplicado el método, ni ratings de webinars anteriores, ni número de empresas que usan Clientify.',
+        evidenceMobile:'Mismo diagnóstico. En mobile los logos de partners pueden quedar en el footer y ser invisibles para la mayoría.',
+        rec:'Añadir 2-3 testimonios de asistentes a webinars anteriores con nombre, cargo y resultado: "Aplicamos el embudo al día siguiente y cerramos 2 clientes esa semana". Subir los logos de partners al hero o justo bajo el formulario.',
+        hyp:'Testimonios de resultados concretos near the CTA pueden incrementar el registro un 10-15% en webinars B2B.',
+        status:'Pendiente',owner:'Marketing',kpi:'CVR'},
+      'trust-1':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'"Déjanos tus datos y te enviamos el enlace de acceso. Tus datos están seguros. Sin spam." es exactamente el microcopy correcto junto al formulario. Resuelve la objeción de privacidad antes de que el usuario la tenga.',
+        evidenceMobile:'Igual de efectivo en mobile.',
+        rec:'Sin acción necesaria. Modelo de buenas prácticas.',status:'Pendiente',owner:'Copy',kpi:'Checkout'},
+      'trust-2':{score:'1',scoreMobile:'1',impact:3,severity:2,confidence:4,effort:2,
+        evidence:'Los 3 beneficios del webinar ("30 min proceso montado", "Acceso a la grabación", "Resuelve tus dudas en vivo") explican el valor pero no la agenda detallada. El usuario no sabe exactamente qué se va a tratar en cada bloque de los 30 minutos.',
+        evidenceMobile:'Mismo diagnóstico.',
+        rec:'Añadir una mini-agenda: "Min 0-10: El mapa del embudo ideal para tu sector → Min 10-20: Los 3 automatismos que cierran el 80% de tus leads → Min 20-30: Sesión en vivo de configuración + Q&A". Esto reduce el miedo al compromiso de tiempo.',
+        status:'Pendiente',owner:'Content',kpi:'Form start rate'},
+      'trust-3':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'ISO/IEC 27001, Google Partner, Meta Business Partner, NVIDIA, Kit Digital. Credenciales sólidas para un SaaS B2B.',
+        evidenceMobile:'Probablemente en footer, menos visible en mobile.',
+        rec:'Subir las 2-3 credenciales más impactantes (ISO, Google Partner) al área del hero o justo bajo el formulario. En el footer están prácticamente invisibles.',
+        status:'Pendiente',owner:'Design',kpi:'CVR'},
+      'trust-4':{score:'1',scoreMobile:'1',impact:3,severity:2,confidence:5,effort:1,
+        evidence:'"No hace falta ser cliente de Clientify para asistir. Te llevas los 3 pasos y los aplicas en el CRM que ya usas." Resuelve la objeción principal de "esto es solo publicidad" de forma muy efectiva. Sin embargo, esta frase parece estar below the fold y no junto al CTA.',
+        evidenceMobile:'En mobile puede quedar aún más abajo.',
+        rec:'Subir este microcopy directamente bajo el botón de inscripción. Es el mejor argumento para usuarios escépticos y debería estar en el punto de decisión.',
+        status:'Pendiente',owner:'Copy',kpi:'CVR'},
+
+      // 5. OFERTA
+      'offer-0':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'La oferta del webinar está clara: 30 minutos, online, en directo, con Q&A, con grabación. Formato, duración y modalidad bien comunicados.',
+        rec:'Sin acción necesaria.',status:'Pendiente',owner:'Content',kpi:'CTR servicios'},
+      'offer-1':{score:'0',scoreMobile:'0',impact:2,severity:2,confidence:3,effort:3,
+        evidence:'No hay guided selling ni selector de perfil dentro de la landing. Un manager de PYME con 3 comerciales y un director comercial de empresa de 200 personas tienen necesidades distintas.',
+        evidenceMobile:'Mismo diagnóstico.',
+        rec:'Bajo el hero, añadir "¿Para quién es este webinar? → Managers que quieren escalar su equipo · Comerciales que gestionan su propia cartera · Fundadores que venden ellos mismos". Puede ser texto estático sin lógica.',
+        status:'Pendiente',owner:'UX',kpi:'Clicks ruta guiada'},
+      'offer-2':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'Hay un convertidor de zonas horarias interactivo. Detalle excelente para una audiencia LATAM + España. Muestra atención a audiencia internacional.',
+        rec:'Sin acción necesaria. Modelo de buenas prácticas.',status:'Pendiente',owner:'Dev',kpi:'CTR destinos'},
+      'offer-3':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'Los 3 beneficios están en formato escaneable con iconos. El copy es conciso y visual. Muy buena jerarquía de información.',
+        rec:'Sin acción necesaria.',status:'Pendiente',owner:'Design',kpi:'Engagement'},
+      'offer-4':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'El webinar es gratuito. La justificación del "precio" es el tiempo (30 minutos) y está perfectamente resuelta: "Solo 30 minutos" + "Acceso a la grabación" elimina las dos objeciones de tiempo (no tengo tiempo ahora, y qué pasa si me lo pierdo).',
+        rec:'Sin acción necesaria.',status:'Pendiente',owner:'Copy',kpi:'CVR'},
+
+      // 6. MOBILE UX
+      'mobile-0':{score:'na',scoreMobile:'1',impact:3,severity:3,confidence:3,effort:2,
+        evidenceMobile:'El hero tiene muchos elementos: H1 largo, subheadline, fecha/hora, 3 badges (30 min, grabación, Q&A), formulario. En mobile es probable que el formulario y/o el CTA queden below the fold. Pendiente verificar en dispositivo real.',
+        rec:'Verificar en mobile que H1 + CTA sean visibles sin scroll. Si no, reducir elementos del hero mobile: ocultar los badges en mobile y mantener solo H1 + subheadline + botón CTA.',
+        status:'Pendiente',owner:'Dev',kpi:'CTR CTA mobile'},
+      'mobile-1':{score:'na',scoreMobile:'1',impact:2,severity:1,confidence:3,effort:1,
+        evidenceMobile:'El menú hamburger en mobile es estándar y aceptable para este tipo de página.',
+        rec:'Considerar simplificar el header mobile a logo + "Inscríbete" solamente, eliminando el hamburger para reducir distracciones.',
+        status:'Pendiente',owner:'Dev',kpi:'CTR menú mobile'},
+      'mobile-2':{score:'na',scoreMobile:'1',impact:2,severity:1,confidence:3,effort:1,
+        evidenceMobile:'El botón "Inscríbete. Es GRATIS" parece tener tamaño suficiente. Pendiente verificar en dispositivo real.',
+        rec:'Verificar padding mínimo 44x44px en todos los elementos táctiles del formulario.',
+        status:'Pendiente',owner:'Dev',kpi:'Misclicks'},
+      'mobile-3':{score:'na',scoreMobile:'1',impact:3,severity:2,confidence:3,effort:2,
+        evidenceMobile:'El orden probable en mobile: H1 → subheadline → badges → formulario → sección beneficios → webinars anteriores → footer. Correcto en líneas generales, aunque los testimonios (si se añaden) deberían ir antes del formulario.',
+        rec:'Verificar orden en mobile y asegurar que las credenciales (ISO, Google Partner) y objeción "no hace falta ser cliente" estén visibles antes del fold o muy cerca del formulario.',
+        status:'Pendiente',owner:'UX',kpi:'Scroll mobile'},
+      'mobile-4':{score:'na',scoreMobile:'2',impact:1,severity:1,confidence:3,effort:1,
+        evidenceMobile:'No se detectan carruseles autorrotativos problemáticos en la landing.',
+        rec:'Sin acción necesaria.',status:'Pendiente',owner:'Dev',kpi:'Interacción'},
+
+      // 7. FORMULARIOS
+      'forms-0':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'El formulario de registro está en el hero, visible above the fold. Punto de entrada al flujo claramente visible desde el primer momento.',
+        evidenceMobile:'Pendiente verificar si el formulario queda visible en mobile sin scroll.',
+        rec:'Sin acción crítica. Verificar visibilidad en mobile.',status:'Pendiente',owner:'Dev',kpi:'Form start rate'},
+      'forms-1':{score:'1',scoreMobile:'1',impact:2,severity:2,confidence:3,effort:1,
+        evidence:'Los campos del formulario no se pudieron verificar completamente. El microcopy "Déjanos tus datos" es vago. Si el formulario pide nombre + email es correcto. Si pide empresa, teléfono o cargo puede generar fricción excesiva para un webinar gratuito.',
+        evidenceMobile:'Mismo diagnóstico.',
+        rec:'Para un webinar gratuito: máximo 2 campos (nombre + email). Cualquier campo adicional reduce el registro. Si se necesitan más datos, pedirlos en el email de confirmación.',
+        status:'Pendiente',owner:'Dev',kpi:'Form error rate'},
+      'forms-2':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'"Te enviamos el enlace de acceso al webinar" es muy claro sobre qué pasa después del registro. El usuario sabe exactamente qué recibirá.',
+        rec:'Añadir también cuándo: "Te lo enviamos inmediatamente + recordatorio el día antes del evento".',
+        status:'Pendiente',owner:'Copy',kpi:'Form completion'},
+      'forms-3':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'"Tus datos están seguros. Sin spam." es el microcopy correcto en el momento correcto. Reduce la fricción de privacidad en el punto de decisión.',
+        rec:'Sin acción necesaria. Modelo de buenas prácticas.',status:'Pendiente',owner:'Copy',kpi:'Field abandonment'},
+      'forms-4':{score:'0',scoreMobile:'0',impact:2,severity:2,confidence:4,effort:1,
+        evidence:'No hay teléfono, email ni WhatsApp visible para usuarios que tengan dudas antes de registrarse. La única acción disponible es registrarse o irse.',
+        evidenceMobile:'En mobile la ausencia de contacto alternativo puede ser especialmente frustrante para usuarios con dudas.',
+        rec:'Añadir un enlace de contacto discreto: "¿Tienes dudas? Escríbenos a hola@clientify.com". No es crítico para un webinar gratuito pero puede capturar leads de alta intención.',
+        status:'Pendiente',owner:'Dev',kpi:'Clicks contacto'},
+
+      // 8. PERSUASIÓN
+      'persuasion-0':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:4,effort:1,
+        evidence:'La landing tiene copy coherente con lo que se esperaría de alguien que busca "webinar CRM ventas" o "cómo automatizar embudos de venta". El message match es sólido.',
+        rec:'Sin acción necesaria.',status:'Pendiente',owner:'Copy',kpi:'Bounce paid'},
+      'persuasion-1':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'"GRATIS", "Solo 30 minutos", "Acceso a la grabación", "Preguntas en directo". Los 4 motivadores principales (coste, tiempo, flexibilidad, acceso directo al experto) están todos comunicados.',
+        rec:'Sin acción necesaria.',status:'Pendiente',owner:'Copy',kpi:'Lead rate'},
+      'persuasion-2':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:5,effort:1,
+        evidence:'El webinar es gratuito y dura 30 minutos. Las dos objeciones de valor (precio y tiempo) están perfectamente resueltas. "Sin spam" añade una capa adicional de eliminación de riesgo.',
+        rec:'Sin acción necesaria.',status:'Pendiente',owner:'Copy',kpi:'CVR'},
+      'persuasion-3':{score:'0',scoreMobile:'0',impact:4,severity:3,confidence:5,effort:1,
+        evidence:'La landing tiene una fecha concreta (23 de junio de 2026, 17:00h Madrid) que crea urgencia natural. Sin embargo, no se aprovecha con ningún mecanismo de FOMO: sin countdown timer, sin "X plazas restantes", sin "cierra el registro el [fecha]". La fecha está mencionada pero no activada como elemento de urgencia.',
+        evidenceMobile:'Mismo problema en mobile. El usuario puede ver la fecha y aplazar la decisión de registro.',
+        rec:'Añadir un countdown timer hasta el inicio del webinar ("Empieza en X días, X horas, X minutos"). Es el quick win de más impacto: bajo esfuerzo, alta visibilidad y puede incrementar el registro un 10-20% entre usuarios indecisos.',
+        hyp:'Un countdown timer activo puede incrementar el registro en un 10-20% al activar el sesgo de escasez temporal en usuarios que visitan la landing días antes del evento.',
+        status:'Pendiente',owner:'Dev',kpi:'Booking start'},
+      'persuasion-4':{score:'2',scoreMobile:'2',impact:2,severity:1,confidence:4,effort:1,
+        evidence:'La estructura narrativa es correcta: Problema ("cada lead recorre su propio camino") → Solución ("embudo automático en 30 minutos") → Beneficios → Credibilidad → Registro. La narrativa es coherente y fluye bien.',
+        rec:'Sin acción necesaria.',status:'Pendiente',owner:'Copy',kpi:'Scroll depth'},
+
+      // 9. TÉCNICA
+      'tech-0':{score:'2',scoreMobile:'2',impact:1,severity:1,confidence:4,effort:1,
+        evidence:'H1 claro y orientado al usuario. La estructura de headings parece correcta para una landing page.',
+        rec:'Verificar H2s para que refuercen la propuesta de valor del webinar.',
+        status:'Pendiente',kpi:'SEO'},
+      'tech-1':{score:'1',scoreMobile:'1',impact:2,severity:1,confidence:3,effort:1,
+        evidence:'Pendiente verificar contraste en dispositivo real. El diseño SaaS suele tener tipografías limpias pero los textos sobre fondos de color o imágenes pueden tener problemas.',
+        rec:'Verificar contraste mínimo 4.5:1 en todos los textos. Especialmente en el CTA y en el microcopy gris claro.',
+        status:'Pendiente',owner:'Design',kpi:'Engagement'},
+      'tech-2':{score:'2',scoreMobile:'2',impact:1,severity:1,confidence:4,effort:1,
+        evidence:'El copy principal está en HTML, no en imágenes. Los CTAs son elementos de texto. Correcto.',
+        rec:'Sin acción necesaria.',status:'Pendiente'},
+      'tech-3':{score:'1',scoreMobile:'1',impact:2,severity:2,confidence:3,effort:2,
+        evidence:'Página SaaS con múltiples assets. Pendiente verificar LCP. Las landing pages con formularios suelen tener scripts de tracking que pueden afectar al rendimiento.',
+        evidenceMobile:'En mobile el impacto es mayor. Verificar que no haya scripts bloqueantes.',
+        rec:'Auditar con PageSpeed Insights. Optimizar LCP apuntando a <2.5s.',
+        status:'Pendiente',owner:'Dev',kpi:'LCP'},
+      'tech-4':{score:'1',scoreMobile:'1',impact:2,severity:1,confidence:3,effort:1,
+        evidence:'Clientify es una empresa SaaS madura, es probable que tenga GA4 + GTM configurado. Pendiente verificar eventos de conversión en el formulario de registro.',
+        rec:'Verificar que el evento de envío del formulario esté trackeado como conversión en GA4. Configurar evento de scroll_depth al 50% y 100%.',
+        status:'Pendiente',owner:'Dev',kpi:'Eventos GA4'},
+    };
+    Object.entries(clientifyScores).forEach(([cid, vals]) => {
+      if(state.clients[idC].criteria[cid]){
+        Object.assign(state.clients[idC].criteria[cid], vals);
+      }
+    });
+    state.activeId = idC;
     save();
   }
   if(!state.activeId || !state.clients[state.activeId]){
