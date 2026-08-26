@@ -338,6 +338,12 @@ label{display:block;font-size:10px;font-weight:500;margin-bottom:7px;color:var(-
 .clarity-metric-box .cml{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em;font-weight:500}
 .clarity-metric-box .cmv{font-family:var(--f-mono);font-size:19px;font-weight:500;color:var(--teal);margin-top:3px}
 @media (max-width:900px){.clarity-metrics-grid{grid-template-columns:1fr 1fr}}
+
+/* Zona de arrastre para importar auditorías */
+.drop-zone{position:fixed;inset:0;z-index:400;background:rgba(10,15,20,.86);display:flex;align-items:center;justify-content:center;pointer-events:none}
+.drop-msg{border:2px dashed var(--turquesa);border-radius:var(--radius);padding:44px 60px;text-align:center;background:var(--ink-2)}
+.drop-msg b{display:block;font-family:var(--f-display);font-size:26px;font-weight:800;letter-spacing:-.04em;color:var(--turquesa);margin-bottom:10px}
+.drop-msg span{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--on-ink-2)}
 </style>
 </head>
 <body>
@@ -358,8 +364,8 @@ label{display:block;font-size:10px;font-weight:500;margin-bottom:7px;color:var(-
       <button onclick="openNewClientModal()">+ Nueva auditoría</button>
     </div>
     <div class="footer-nav">
-      <button onclick="exportData()" style="display:none">⬇ Exportar datos</button>
-      <button onclick="importData()" style="display:none">⬆ Importar datos</button>
+      <button onclick="exportData()">⬇ Exportar copia</button>
+      <button onclick="importData()">⬆ Importar auditoría</button>
       <button onclick="resetAll()">⚠ Reiniciar todo</button>
     </div>
   </aside>
@@ -2441,24 +2447,81 @@ function exportData(){
   toast('Datos exportados');
 }
 
+// Acepta dos formas de archivo: una auditoría suelta {id,name,criteria,...}
+// o una copia completa {clients:{...},activeId}. En ambos casos FUSIONA con lo
+// que ya hay — nunca sustituye — para no perder auditorías por importar una.
+function fusionarImportacion(data){
+  const entrantes = data && data.clients && typeof data.clients === 'object'
+    ? Object.values(data.clients)
+    : (data && data.criteria ? [data] : null);
+  if(!entrantes || !entrantes.length) throw new Error('sin auditorías');
+
+  let nuevos = 0, actualizados = 0; const nombres = []; let ultimo = null;
+  entrantes.forEach(c => {
+    if(!c || !c.criteria || !c.name) return;
+    const id = c.id || ('a' + c.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,24));
+    c.id = id;
+    if(state.clients[id]) actualizados++; else nuevos++;
+    state.clients[id] = c;
+    nombres.push(c.name); ultimo = id;
+  });
+  if(!ultimo) throw new Error('sin auditorías válidas');
+
+  state.activeId = ultimo;
+  save(); refreshClientPicker(); renderPanel(); navigate('panel');
+  const partes = [];
+  if(nuevos) partes.push(nuevos + (nuevos===1 ? ' auditoría nueva' : ' auditorías nuevas'));
+  if(actualizados) partes.push(actualizados + (actualizados===1 ? ' actualizada' : ' actualizadas'));
+  toast(partes.join(' · ') + ' — ' + nombres.slice(0,2).join(', ') + (nombres.length>2 ? '…' : ''));
+}
+
+function leerArchivoImportacion(file){
+  if(!file) return;
+  if(!/\.json$/i.test(file.name)){ alert('El archivo debe ser un .json de auditoría.'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try{ fusionarImportacion(JSON.parse(ev.target.result)); }
+    catch(err){
+      alert('No he podido leer ese archivo.\n\n' +
+            'Debe ser el .json que genera el skill de auditoría, o una copia\n' +
+            'exportada desde aquí con "Exportar copia".\n\nDetalle: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
 function importData(){
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.json';
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try{
-        const data = JSON.parse(ev.target.result);
-        if(data.clients){ state = data; save(); refreshClientPicker(); renderPanel(); navigate('panel'); toast('Datos importados'); }
-      }catch(err){ alert('Archivo no válido'); }
-    };
-    reader.readAsText(file);
-  };
+  input.accept = '.json,application/json';
+  input.onchange = e => leerArchivoImportacion(e.target.files[0]);
   input.click();
 }
+
+// Arrastrar el .json sobre la ventana hace lo mismo que el botón Importar.
+(function(){
+  let capa = null, profundidad = 0;
+  const traeArchivo = e => Array.from(e.dataTransfer?.types || []).includes('Files');
+  window.addEventListener('dragenter', e => {
+    if(!traeArchivo(e)) return;
+    e.preventDefault(); profundidad++;
+    if(!capa){
+      capa = document.createElement('div');
+      capa.className = 'drop-zone';
+      capa.innerHTML = '<div class="drop-msg"><b>Suelta aquí el .json</b>' +
+        '<span>Se añade a tus auditorías. No sustituye las que ya tienes.</span></div>';
+      document.body.appendChild(capa);
+    }
+  });
+  window.addEventListener('dragover', e => { if(traeArchivo(e)) e.preventDefault(); });
+  const limpiar = () => { profundidad = 0; if(capa){ capa.remove(); capa = null; } };
+  window.addEventListener('dragleave', e => { if(traeArchivo(e) && --profundidad <= 0) limpiar(); });
+  window.addEventListener('drop', e => {
+    if(!traeArchivo(e)) return;
+    e.preventDefault(); limpiar();
+    leerArchivoImportacion(e.dataTransfer.files[0]);
+  });
+})();
 
 function resetAll(){
   if(!confirm('¿Borrar TODAS las auditorías? Esta acción no se puede deshacer.')) return;
